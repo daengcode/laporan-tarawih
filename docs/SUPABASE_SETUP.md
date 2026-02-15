@@ -162,7 +162,7 @@ const { success, data } = await addPemasukan({
   name: "Donasi Rutin",
   amount: 1000000,
   source: "Jemaah",
-  createdBy: user.id,
+  created_by: user.id,
 });
 
 // Update pemasukan
@@ -198,8 +198,8 @@ const { success, data } = await addPengeluaran({
   date: "2024-01-02",
   name: "Pembayaran Listrik",
   amount: 500000,
-  expenseType: "Operasional",
-  createdBy: user.id,
+  expense_type: "Operasional",
+  created_by: user.id,
 });
 
 // Update pengeluaran
@@ -225,7 +225,7 @@ const {
   getTransaksiPerBulan,
   getTransaksiPerHari,
   getTransaksiBySource,
-  getTransaksiByExpenseType,
+  getTransaksiByexpense_type,
   exportTransaksi,
 } = useLaporan();
 
@@ -246,7 +246,7 @@ const { success, data } = await getTransaksiPerHari("2024-01-01", "2024-01-31");
 const { success, data } = await getTransaksiBySource({ startDate, endDate });
 
 // Transaksi berdasarkan tipe pengeluaran
-const { success, data } = await getTransaksiByExpenseType({
+const { success, data } = await getTransaksiByexpense_type({
   startDate,
   endDate,
 });

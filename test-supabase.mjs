@@ -96,7 +96,7 @@ async function testConnection() {
     console.log("\n📊 Test 3: Ambil sample data users");
     const { data: sampleUsers, error: sampleUsersError } = await supabase
       .from("users")
-      .select("id, username, name, createdAt")
+      .select("id, username, name, created_at")
       .limit(5);
 
     if (sampleUsersError) {
@@ -122,7 +122,7 @@ async function testConnection() {
     const { data: sampleTransactions, error: sampleTransactionsError } = await supabase
       .from("transactions")
       .select("id, date, name, type, amount")
-      .is("deletedAt", null)
+      .is("deleted_at", null)
       .limit(5);
 
     if (sampleTransactionsError) {

@@ -24,7 +24,7 @@
           Masjid Baiturrahim
         </h1>
         <p class="text-sm text-[#4a5d53] dark:text-gray-400 mt-2 text-center font-medium">
-          Kelola Laporan Keuangan Tarawih dengan Mudah
+          Kelola laporan amaliyah Ramadhan 1447 H
         </p>
       </div>
 
@@ -73,7 +73,7 @@
               class="w-full pl-10 pr-12 py-3.5 rounded-lg border border-[#dbe6e0] dark:border-[#2d4a3b] bg-white dark:bg-[#102219] text-[#111814] dark:text-white focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all placeholder:text-[#618975]/60"
               id="password"
               placeholder="••••••"
-              type="password"
+              :type="showPassword ? 'text' : 'password'"
             />
             <button
               @click="togglePasswordVisibility"
@@ -105,15 +105,6 @@
           <p class="text-sm text-red-600 dark:text-red-400 text-center">{{ error }}</p>
         </div>
       </form>
-
-      <!-- Footer / Registration -->
-      <div class="mt-10 pt-6 border-t border-[#dbe6e0] dark:border-[#2d4a3b] text-center">
-        <span
-          class="mt-2 inline-block text-[#111814] dark:text-white font-extrabold hover:text-primary transition-colors underline decoration-primary underline-offset-4"
-        >
-          Ramadhan 1447 H
-        </span>
-      </div>
     </main>
   </div>
 </template>

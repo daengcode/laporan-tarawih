@@ -1,10 +1,12 @@
 import { ref } from "vue";
 import { supabase } from "@/supabase/client";
+import { useAuth } from "./useAuth";
 
 /**
  * Composable untuk CRUD Pengeluaran
  */
 export function usePengeluaran() {
+  const { setCurrentUserId, getUserId } = useAuth();
   const loading = ref(false);
   const error = ref(null);
 
@@ -18,11 +20,14 @@ export function usePengeluaran() {
     error.value = null;
 
     try {
+      // Set current user ID untuk RLS
+      await setCurrentUserId();
+
       let query = supabase
         .from("transactions")
         .select("*")
         .eq("type", "pengeluaran")
-        .is("deletedAt", null) // Hanya yang belum dihapus
+        .is("deleted_at", null) // Hanya yang belum dihapus
         .order("date", { ascending: false });
 
       // Filter berdasarkan tanggal
@@ -56,6 +61,9 @@ export function usePengeluaran() {
     error.value = null;
 
     try {
+      // Set current user ID untuk RLS
+      await setCurrentUserId();
+
       const { data, error: fetchError } = await supabase
         .from("transactions")
         .select("*")
@@ -83,6 +91,12 @@ export function usePengeluaran() {
     error.value = null;
 
     try {
+      // Set current user ID untuk RLS
+      await setCurrentUserId();
+
+      // Gunakan user ID yang sedang login
+      const userId = getUserId();
+
       const { data, error: insertError } = await supabase
         .from("transactions")
         .insert([
@@ -91,11 +105,11 @@ export function usePengeluaran() {
             name: pengeluaran.name,
             type: "pengeluaran",
             amount: pengeluaran.amount,
-            expenseType: pengeluaran.expenseType || null,
+            expense_type: pengeluaran.expense_type || null,
             proof: pengeluaran.proof || null,
-            createdBy: pengeluaran.createdBy,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
+            created_by: userId,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
           },
         ])
         .select()
@@ -123,15 +137,18 @@ export function usePengeluaran() {
     error.value = null;
 
     try {
+      // Set current user ID untuk RLS
+      await setCurrentUserId();
+
       const { data, error: updateError } = await supabase
         .from("transactions")
         .update({
           date: pengeluaran.date,
           name: pengeluaran.name,
           amount: pengeluaran.amount,
-          expenseType: pengeluaran.expenseType || null,
+          expense_type: pengeluaran.expense_type || null,
           proof: pengeluaran.proof || null,
-          updatedAt: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
         })
         .eq("id", id)
         .select()
@@ -158,9 +175,12 @@ export function usePengeluaran() {
     error.value = null;
 
     try {
+      // Set current user ID untuk RLS
+      await setCurrentUserId();
+
       const { error: deleteError } = await supabase
         .from("transactions")
-        .update({ deletedAt: new Date().toISOString() })
+        .update({ deleted_at: new Date().toISOString() })
         .eq("id", id);
 
       if (deleteError) throw deleteError;
@@ -184,11 +204,14 @@ export function usePengeluaran() {
     error.value = null;
 
     try {
+      // Set current user ID untuk RLS
+      await setCurrentUserId();
+
       let query = supabase
         .from("transactions")
         .select("amount")
         .eq("type", "pengeluaran")
-        .is("deletedAt", null);
+        .is("deleted_at", null);
 
       // Filter berdasarkan tanggal
       if (filters.startDate) {

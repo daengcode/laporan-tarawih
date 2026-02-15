@@ -253,7 +253,7 @@ const savePemasukan = async () => {
       name: "Infaq Laki-laki",
       amount: infaqLaki,
       source: "Kotak Amal Laki-laki",
-      createdBy: user.value.id,
+      created_by: user.value.id,
     });
     if (!result.success) {
       alert(result.error || "Gagal menyimpan infaq laki-laki!");
@@ -268,7 +268,7 @@ const savePemasukan = async () => {
       name: "Infaq Perempuan",
       amount: infaqPerempuan,
       source: "Kotak Amal Perempuan",
-      createdBy: user.value.id,
+      created_by: user.value.id,
     });
     if (!result.success) {
       alert(result.error || "Gagal menyimpan infaq perempuan!");
@@ -283,7 +283,7 @@ const savePemasukan = async () => {
       name: form.value.namaDonatur || "Pemasukan Lainnya",
       amount: jumlahLainnya,
       source: form.value.sumberDana === "amplop" ? "Amplop" : "Lainnya",
-      createdBy: user.value.id,
+      created_by: user.value.id,
     });
     if (!result.success) {
       alert(result.error || "Gagal menyimpan pemasukan lainnya!");

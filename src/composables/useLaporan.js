@@ -1,10 +1,12 @@
 import { ref } from "vue";
 import { supabase } from "@/supabase/client";
+import { useAuth } from "./useAuth";
 
 /**
  * Composable untuk Query Laporan Keuangan
  */
 export function useLaporan() {
+  const { setCurrentUserId } = useAuth();
   const loading = ref(false);
   const error = ref(null);
 
@@ -18,10 +20,13 @@ export function useLaporan() {
     error.value = null;
 
     try {
+      // Set current user ID untuk RLS
+      await setCurrentUserId();
+
       let query = supabase
         .from("transactions")
         .select("*")
-        .is("deletedAt", null) // Hanya yang belum dihapus
+        .is("deleted_at", null) // Hanya yang belum dihapus
         .order("date", { ascending: false });
 
       // Filter berdasarkan tipe transaksi
@@ -60,7 +65,10 @@ export function useLaporan() {
     error.value = null;
 
     try {
-      let query = supabase.from("transactions").select("type, amount").is("deletedAt", null);
+      // Set current user ID untuk RLS
+      await setCurrentUserId();
+
+      let query = supabase.from("transactions").select("type, amount").is("deleted_at", null);
 
       // Filter berdasarkan tanggal
       if (filters.startDate) {
@@ -110,13 +118,16 @@ export function useLaporan() {
     error.value = null;
 
     try {
+      // Set current user ID untuk RLS
+      await setCurrentUserId();
+
       const startDate = `${year}-01-01`;
       const endDate = `${year}-12-31`;
 
       const { data, error: fetchError } = await supabase
         .from("transactions")
         .select("*")
-        .is("deletedAt", null)
+        .is("deleted_at", null)
         .gte("date", startDate)
         .lte("date", endDate)
         .order("date", { ascending: true });
@@ -162,10 +173,13 @@ export function useLaporan() {
     error.value = null;
 
     try {
+      // Set current user ID untuk RLS
+      await setCurrentUserId();
+
       const { data, error: fetchError } = await supabase
         .from("transactions")
         .select("*")
-        .is("deletedAt", null)
+        .is("deleted_at", null)
         .gte("date", startDate)
         .lte("date", endDate)
         .order("date", { ascending: true });
@@ -215,11 +229,14 @@ export function useLaporan() {
     error.value = null;
 
     try {
+      // Set current user ID untuk RLS
+      await setCurrentUserId();
+
       let query = supabase
         .from("transactions")
         .select("*")
         .eq("type", "pemasukan")
-        .is("deletedAt", null);
+        .is("deleted_at", null);
 
       // Filter berdasarkan tanggal
       if (filters.startDate) {
@@ -262,16 +279,19 @@ export function useLaporan() {
    * @param {object} filters - Filter opsional (startDate, endDate)
    * @returns {Promise<{success: boolean, data?: array, error?: string}>}
    */
-  const getTransaksiByExpenseType = async (filters = {}) => {
+  const getTransaksiByexpense_type = async (filters = {}) => {
     loading.value = true;
     error.value = null;
 
     try {
+      // Set current user ID untuk RLS
+      await setCurrentUserId();
+
       let query = supabase
         .from("transactions")
         .select("*")
         .eq("type", "pengeluaran")
-        .is("deletedAt", null);
+        .is("deleted_at", null);
 
       // Filter berdasarkan tanggal
       if (filters.startDate) {
@@ -286,21 +306,21 @@ export function useLaporan() {
       if (fetchError) throw fetchError;
 
       // Group by expense type
-      const expenseTypeData = {};
+      const expense_typeData = {};
       data.forEach((transaksi) => {
-        const expenseType = transaksi.expenseType || "Lainnya";
-        if (!expenseTypeData[expenseType]) {
-          expenseTypeData[expenseType] = {
-            expenseType,
+        const expense_type = transaksi.expense_type || "Lainnya";
+        if (!expense_typeData[expense_type]) {
+          expense_typeData[expense_type] = {
+            expense_type,
             total: 0,
             count: 0,
           };
         }
-        expenseTypeData[expenseType].total += transaksi.amount;
-        expenseTypeData[expenseType].count += 1;
+        expense_typeData[expense_type].total += transaksi.amount;
+        expense_typeData[expense_type].count += 1;
       });
 
-      return { success: true, data: Object.values(expenseTypeData) };
+      return { success: true, data: Object.values(expense_typeData) };
     } catch (err) {
       error.value = err.message;
       return { success: false, error: err.message };
@@ -343,9 +363,9 @@ export function useLaporan() {
           item.name,
           item.type,
           item.amount,
-          item.source || item.expenseType || "-",
-          item.createdBy,
-          item.createdAt,
+          item.source || item.expense_type || "-",
+          item.created_by,
+          item.created_at,
         ]);
 
         const csvContent = [
@@ -392,7 +412,7 @@ export function useLaporan() {
     getTransaksiPerBulan,
     getTransaksiPerHari,
     getTransaksiBySource,
-    getTransaksiByExpenseType,
+    getTransaksiByexpense_type,
     exportTransaksi,
   };
 }

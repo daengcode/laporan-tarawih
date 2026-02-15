@@ -11,7 +11,7 @@
           </div>
           <div>
             <h1 class="text-[#111814] text-lg font-bold leading-tight tracking-tight">
-              Laporan Tarawih Masjid Baiturrahim
+              Amaliyah Ramadhan Baiturrahim 1447 H
             </h1>
             <p v-if="user" class="text-xs text-gray-500">Halo, {{ user.name }}</p>
           </div>
@@ -235,10 +235,10 @@ const getTransactionIcon = (transaction) => {
     if (transaction.source?.toLowerCase().includes("zakat")) return "volunteer_activism";
     return "trending_up";
   } else {
-    if (transaction.expenseType?.toLowerCase().includes("imam")) return "person";
+    if (transaction.expense_type?.toLowerCase().includes("imam")) return "person";
     if (
-      transaction.expenseType?.toLowerCase().includes("konsumsi") ||
-      transaction.expenseType?.toLowerCase().includes("takjil")
+      transaction.expense_type?.toLowerCase().includes("konsumsi") ||
+      transaction.expense_type?.toLowerCase().includes("takjil")
     )
       return "restaurant";
     return "trending_down";
@@ -297,8 +297,8 @@ const updateRecentTransactions = (date) => {
     recentTransactions.value = selectedDateData.transactions.map((transaction) => ({
       id: transaction.id,
       title: transaction.name,
-      time: formatTime(transaction.createdAt),
-      category: transaction.type === "pemasukan" ? transaction.source : transaction.expenseType,
+      time: formatTime(transaction.created_at),
+      category: transaction.type === "pemasukan" ? transaction.source : transaction.expense_type,
       amount: transaction.amount,
       type: transaction.type === "pemasukan" ? "income" : "expense",
       icon: getTransactionIcon(transaction),

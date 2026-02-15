@@ -14,7 +14,7 @@ BEGIN
         RAISE NOTICE 'User admin sudah ada';
     ELSE
         -- Insert user admin
-        INSERT INTO users (username, password, name, createdAt, updatedAt)
+        INSERT INTO users (username, password, name, created_at, updated_at)
         VALUES ('admin', 'admin123', 'Administrator', NOW(), NOW());
         RAISE NOTICE 'User admin berhasil dibuat';
     END IF;

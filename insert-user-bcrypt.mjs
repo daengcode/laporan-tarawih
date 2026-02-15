@@ -110,7 +110,7 @@ async function insertUserWithBcrypt() {
     console.log(`   Username: ${newUser.username}`);
     console.log(`   Name: ${newUser.name}`);
     console.log(`   Password: [HIDDEN]`);
-    console.log(`   CreatedAt: ${newUser.createdAt}`);
+    console.log(`   created_at: ${newUser.created_at}`);
 
     console.log("\n=== Login Credentials ===");
     console.log(`Username: ${username}`);

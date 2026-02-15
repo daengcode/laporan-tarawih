@@ -275,8 +275,8 @@ const savePengeluaran = async () => {
       date: new Date().toISOString().split("T")[0],
       name: "Honor Ceramah",
       amount: ceramah,
-      expenseType: "Rutin",
-      createdBy: user.value.id,
+      expense_type: "Rutin",
+      created_by: user.value.id,
     });
     if (!result.success) {
       alert(result.error || "Gagal menyimpan honor ceramah!");
@@ -290,8 +290,8 @@ const savePengeluaran = async () => {
       date: new Date().toISOString().split("T")[0],
       name: "Honor Imam",
       amount: imam,
-      expenseType: "Rutin",
-      createdBy: user.value.id,
+      expense_type: "Rutin",
+      created_by: user.value.id,
     });
     if (!result.success) {
       alert(result.error || "Gagal menyimpan honor imam!");
@@ -305,8 +305,8 @@ const savePengeluaran = async () => {
       date: new Date().toISOString().split("T")[0],
       name: form.value.namaKeperluan || "Pengeluaran Lainnya",
       amount: biayaKeperluan,
-      expenseType: form.value.jenisKeperluan === "kebersihan" ? "Kebersihan" : "Lainnya",
-      createdBy: user.value.id,
+      expense_type: form.value.jenisKeperluan === "kebersihan" ? "Kebersihan" : "Lainnya",
+      created_by: user.value.id,
     });
     if (!result.success) {
       alert(result.error || "Gagal menyimpan pengeluaran lainnya!");

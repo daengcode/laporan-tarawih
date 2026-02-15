@@ -74,7 +74,7 @@ async function testLogin() {
       console.log(`  Username: ${user.username}`);
       console.log(`  Name: ${user.name}`);
       console.log(`  Password: ${user.password}`);
-      console.log(`  CreatedAt: ${user.createdAt}`);
+      console.log(`  created_at: ${user.created_at}`);
     });
 
     // Cek password

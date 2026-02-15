@@ -13,7 +13,7 @@ SELECT * FROM users;
 -- Insert user admin (hapus dulu jika sudah ada)
 DELETE FROM users WHERE username = 'admin';
 
-INSERT INTO users (id, username, password, name, createdAt, updatedAt)
+INSERT INTO users (id, username, password, name, created_at, updated_at)
 VALUES (
     gen_random_uuid(),
     'admin',

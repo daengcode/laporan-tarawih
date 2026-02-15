@@ -75,7 +75,7 @@ async function checkUsersTable() {
         console.log(`  Username: ${user.username}`);
         console.log(`  Name: ${user.name}`);
         console.log(`  Password: ${user.password}`);
-        console.log(`  CreatedAt: ${user.createdAt}`);
+        console.log(`  created_at: ${user.created_at}`);
         console.log(`  Kolom yang tersedia: ${Object.keys(user).join(", ")}`);
       });
     } else {
@@ -104,7 +104,7 @@ async function checkUsersTable() {
           console.log(`  Username: ${user.username}`);
           console.log(`  Name: ${user.name}`);
           console.log(`  Password: ${user.password}`);
-          console.log(`  CreatedAt: ${user.createdAt}`);
+          console.log(`  created_at: ${user.created_at}`);
         });
       }
     }
@@ -131,7 +131,7 @@ async function checkUsersTable() {
           console.log(`  Username: ${user.username}`);
           console.log(`  Name: ${user.name}`);
           console.log(`  Password: ${user.password}`);
-          console.log(`  CreatedAt: ${user.createdAt}`);
+          console.log(`  created_at: ${user.created_at}`);
         });
       }
     }

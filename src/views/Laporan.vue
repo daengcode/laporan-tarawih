@@ -14,7 +14,7 @@
           <span class="material-symbols-outlined text-[#111814]">arrow_back</span>
         </button>
         <h1 class="text-[#111814] text-lg font-bold leading-tight tracking-tight">
-          Laporan Keuangan Tarawih
+          Laporan Amaliyah Ramadhan 1447 H
         </h1>
         <button
           @click="handleLogout"
@@ -141,12 +141,12 @@
           </h2>
         </div>
         <div class="p-5 space-y-4">
-          <!-- Rutin (tampilkan expenseType) -->
+          <!-- Rutin (tampilkan expense_type) -->
           <div
             v-for="item in getPengeluaranByDateGrouped(selectedDateDate).filter(
-              (i) => i.expenseType === 'Rutin',
+              (i) => i.expense_type === 'Rutin',
             )"
-            :key="item.expenseType"
+            :key="item.expense_type"
             class="flex justify-between items-center"
           >
             <div class="flex items-center gap-3">
@@ -156,7 +156,7 @@
                 <span class="material-symbols-outlined text-slate-500 text-lg">receipt</span>
               </div>
               <span class="text-slate-600 dark:text-slate-300 font-medium">{{
-                item.expenseType
+                item.expense_type
               }}</span>
             </div>
             <span class="font-bold text-slate-900 dark:text-white">{{
@@ -166,9 +166,9 @@
           <!-- Pengeluaran lainnya (tampilkan nama pengeluaran) -->
           <div
             v-for="item in getPengeluaranByDateGrouped(selectedDateDate).filter(
-              (i) => i.expenseType !== 'Rutin',
+              (i) => i.expense_type !== 'Rutin',
             )"
-            :key="item.expenseType"
+            :key="item.expense_type"
             class="space-y-2"
           >
             <div
@@ -249,7 +249,7 @@
           </div>
           <div class="absolute inset-0 bg-gradient-to-t from-white/10 to-transparent"></div>
         </div>
-        <p class="text-lg font-bold text-slate-900 dark:text-white">Fulan</p>
+        <p class="text-lg font-bold text-slate-900 dark:text-white">Bendahara Masjid</p>
       </section>
     </main>
 
@@ -374,21 +374,21 @@ const getPemasukanByDateGrouped = (date) => {
   return Object.values(grouped);
 };
 
-// Get pengeluaran berdasarkan tanggal dan groupby expenseType dengan detail
+// Get pengeluaran berdasarkan tanggal dan groupby expense_type dengan detail
 const getPengeluaranByDateGrouped = (date) => {
   const pengeluaran = transactions.value.filter((t) => t.date === date && t.type === "pengeluaran");
   const grouped = {};
   pengeluaran.forEach((p) => {
-    const expenseType = p.expenseType || "Lainnya";
-    if (!grouped[expenseType]) {
-      grouped[expenseType] = {
-        expenseType,
+    const expense_type = p.expense_type || "Lainnya";
+    if (!grouped[expense_type]) {
+      grouped[expense_type] = {
+        expense_type,
         total: 0,
         items: [],
       };
     }
-    grouped[expenseType].total += p.amount;
-    grouped[expenseType].items.push({
+    grouped[expense_type].total += p.amount;
+    grouped[expense_type].items.push({
       id: p.id,
       name: p.name,
       amount: p.amount,
