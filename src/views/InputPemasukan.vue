@@ -252,8 +252,8 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { ref, onMounted, onBeforeUnmount, watch } from "vue";
+import { useRouter, onBeforeRouteLeave } from "vue-router";
 import { useAuth } from "@/composables/useAuth";
 import { usePemasukan } from "@/composables/usePemasukan";
 import Swal from "sweetalert2";
@@ -270,6 +270,59 @@ const form = ref({
   infaqPerempuan: "",
   pemasukanLainnya: [],
   sumberDana: "kotak-amal",
+});
+
+// Track if form has been modified
+const isDirty = ref(false);
+const initialForm = JSON.stringify(form.value);
+
+// Watch for form changes
+watch(
+  form,
+  () => {
+    isDirty.value = JSON.stringify(form.value) !== initialForm;
+  },
+  { deep: true },
+);
+
+// Handle before route leave
+onBeforeRouteLeave(async (to, from, next) => {
+  if (isDirty.value) {
+    const result = await Swal.fire({
+      title: "Perubahan Belum Disimpan",
+      text: "Anda memiliki perubahan yang belum disimpan. Apakah Anda yakin ingin meninggalkan halaman ini?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#13ec80",
+      cancelButtonColor: "#ef4444",
+      confirmButtonText: "Ya, Tinggalkan",
+      cancelButtonText: "Batal",
+    });
+
+    if (result.isConfirmed) {
+      next();
+    } else {
+      next(false);
+    }
+  } else {
+    next();
+  }
+});
+
+// Handle browser refresh/close
+const handleBeforeUnload = (e) => {
+  if (isDirty.value) {
+    e.preventDefault();
+    e.returnValue = "";
+  }
+};
+
+onMounted(() => {
+  window.addEventListener("beforeunload", handleBeforeUnload);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener("beforeunload", handleBeforeUnload);
 });
 
 // Methods
@@ -477,6 +530,7 @@ const savePemasukan = async () => {
     text: "Pemasukan berhasil disimpan!",
     confirmButtonColor: "#13ec80",
   }).then(() => {
+    isDirty.value = false;
     router.push("/");
   });
 };

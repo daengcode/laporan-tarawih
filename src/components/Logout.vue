@@ -19,12 +19,12 @@ const { logout } = useAuth();
 const handleLogout = () => {
   Swal.fire({
     title: "Konfirmasi",
-    text: "Apakah Anda yakin ingin logout?",
+    text: "Apakah Anda yakin ingin keluar?",
     icon: "question",
     showCancelButton: true,
     confirmButtonColor: "#13ec80",
     cancelButtonColor: "#d33",
-    confirmButtonText: "Ya, logout",
+    confirmButtonText: "Ya, keluar",
     cancelButtonText: "Batal",
   }).then((result) => {
     if (result.isConfirmed) {
