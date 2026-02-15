@@ -16,7 +16,7 @@
         <h2
           class="text-gray-900 dark:text-white text-lg font-bold leading-tight tracking-tight flex-1 ml-4"
         >
-          Input Pengeluaran
+          Tambah Pengeluaran
         </h2>
         <Logout />
       </div>
@@ -63,10 +63,11 @@
                   </div>
                   <input
                     v-model="form.ceramah"
+                    @input="formatNumberInput($event, 'ceramah')"
                     class="form-input flex w-full rounded-xl text-gray-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/20 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:border-primary h-14 pl-10 pr-4 text-base font-bold placeholder:text-gray-300"
                     inputmode="numeric"
                     placeholder="0"
-                    type="number"
+                    type="text"
                   />
                 </div>
               </label>
@@ -80,10 +81,11 @@
                   </div>
                   <input
                     v-model="form.imam"
+                    @input="formatNumberInput($event, 'imam')"
                     class="form-input flex w-full rounded-xl text-gray-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/20 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:border-primary h-14 pl-10 pr-4 text-base font-bold placeholder:text-gray-300"
                     inputmode="numeric"
                     placeholder="0"
-                    type="number"
+                    type="text"
                   />
                 </div>
               </label>
@@ -142,10 +144,11 @@
                       </div>
                       <input
                         v-model="item.biaya"
+                        @input="formatNumberInput($event, 'biaya', index)"
                         class="form-input flex w-full rounded-xl text-gray-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-orange-200 dark:focus:ring-orange-700 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:border-orange-500 h-14 pl-10 pr-4 text-base font-bold placeholder:text-gray-300"
                         inputmode="numeric"
                         placeholder="0"
-                        type="number"
+                        type="text"
                       />
                     </div>
                   </label>
@@ -282,6 +285,37 @@ const hapusPengeluaranLainnya = (index) => {
   form.value.pengeluaranLainnya.splice(index, 1);
 };
 
+// Format number dengan separator ribuan
+const formatNumber = (value) => {
+  if (!value) return "";
+  // Hapus semua karakter non-digit
+  const cleanValue = value.toString().replace(/\D/g, "");
+  // Format dengan titik sebagai pemisah ribuan
+  return cleanValue.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+};
+
+// Format input number saat user mengetik
+const formatNumberInput = (event, field, index = null) => {
+  const inputValue = event.target.value;
+  const formattedValue = formatNumber(inputValue);
+
+  if (index !== null) {
+    form.value.pengeluaranLainnya[index][field] = formattedValue;
+  } else {
+    form.value[field] = formattedValue;
+  }
+
+  // Update input value
+  event.target.value = formattedValue;
+};
+
+// Unformat number untuk menyimpan ke database
+const unformatNumber = (value) => {
+  if (!value) return 0;
+  // Hapus semua titik
+  return parseInt(value.toString().replace(/\./g, "")) || 0;
+};
+
 // Format tanggal ke Hijriah
 const formatTanggalHijriah = (dateString) => {
   if (!dateString) return "-";
@@ -350,12 +384,12 @@ const formatTanggalHijriah = (dateString) => {
 
 const savePengeluaran = async () => {
   // Validasi form
-  const ceramah = parseFloat(form.value.ceramah) || 0;
-  const imam = parseFloat(form.value.imam) || 0;
+  const ceramah = unformatNumber(form.value.ceramah);
+  const imam = unformatNumber(form.value.imam);
 
   // Hitung total dari pengeluaran lainnya
   const totalPengeluaranLainnya = form.value.pengeluaranLainnya.reduce((sum, item) => {
-    return sum + (parseFloat(item.biaya) || 0);
+    return sum + unformatNumber(item.biaya);
   }, 0);
 
   const total = ceramah + imam + totalPengeluaranLainnya;
@@ -413,11 +447,12 @@ const savePengeluaran = async () => {
   // Simpan pengeluaran lainnya
   if (form.value.pengeluaranLainnya.length > 0) {
     for (const item of form.value.pengeluaranLainnya) {
-      if (item.biaya > 0) {
+      const biaya = unformatNumber(item.biaya);
+      if (biaya > 0) {
         const result = await addPengeluaran({
           date: form.value.tanggal,
           name: item.nama || "Pengeluaran Lainnya",
-          amount: parseFloat(item.biaya),
+          amount: biaya,
           expense_type: item.jenisKeperluan === "kebersihan" ? "Kebersihan" : "Buka Puasa",
           created_by: user.value.id,
         });

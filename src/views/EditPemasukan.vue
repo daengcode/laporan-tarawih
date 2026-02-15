@@ -8,7 +8,7 @@
         class="flex items-center bg-white dark:bg-background-dark p-4 pb-2 justify-between sticky top-0 z-10 border-b border-gray-100 dark:border-gray-800"
       >
         <button
-          @click="router.push('/')"
+          @click="router.back()"
           class="text-gray-900 dark:text-white flex size-10 shrink-0 items-center justify-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
         >
           <span class="material-symbols-outlined">arrow_back</span>
@@ -16,7 +16,7 @@
         <h2
           class="text-gray-900 dark:text-white text-lg font-bold leading-tight tracking-tight flex-1 ml-4"
         >
-          Tambah Pemasukan
+          Edit Pemasukan
         </h2>
         <Logout />
       </div>
@@ -46,14 +46,14 @@
           </section>
 
           <!-- Section: Pemasukan Kotak Amal -->
-          <section>
+          <section v-if="jenisPemasukan === 'rutin'">
             <h3
               class="text-gray-900 dark:text-white text-base font-bold leading-tight tracking-tight mb-3 flex items-center gap-2"
             >
               Pemasukan Rutin
             </h3>
             <div class="grid grid-cols-1 gap-4">
-              <label class="flex flex-col gap-2">
+              <label v-if="jenisInfaq === 'laki'" class="flex flex-col gap-2">
                 <p class="text-gray-600 dark:text-gray-400 text-sm font-semibold ml-1">
                   Infaq Laki-laki
                 </p>
@@ -71,7 +71,7 @@
                   />
                 </div>
               </label>
-              <label class="flex flex-col gap-2">
+              <label v-if="jenisInfaq === 'perempuan'" class="flex flex-col gap-2">
                 <p class="text-gray-600 dark:text-gray-400 text-sm font-semibold ml-1">
                   Infaq Perempuan
                 </p>
@@ -93,24 +93,12 @@
           </section>
 
           <!-- Section: Pemasukan Lainnya -->
-          <section class="space-y-4">
+          <section v-if="jenisPemasukan === 'lainnya'" class="space-y-4">
             <h3
               class="text-gray-900 dark:text-white text-base font-bold leading-tight tracking-tight mb-3 flex items-center gap-2"
             >
               Pemasukan Lainnya
             </h3>
-            <div class="space-y-3">
-              <!-- Tombol Tambah -->
-              <button
-                @click="tambahPemasukanLainnya"
-                class="w-full flex items-center gap-2 p-3 rounded-xl border-2 border-dashed border-primary/30 hover:border-primary/50 hover:bg-primary/5 transition-all"
-              >
-                <span class="material-symbols-outlined text-primary">add</span>
-                <span class="text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >Tambah Pemasukan</span
-                >
-              </button>
-            </div>
             <!-- List Pemasukan Lainnya -->
             <div v-if="form.pemasukanLainnya.length > 0" class="space-y-3">
               <div
@@ -157,7 +145,7 @@
                     <div class="grid grid-cols-2 gap-3">
                       <!-- Option 2: Amplop -->
                       <div
-                        @click="selectSumberItem(index, 'amplop')"
+                        @click="item.sumberDana = 'amplop'"
                         :class="[
                           'flex items-center p-3 rounded-xl border cursor-pointer transition-all',
                           item.sumberDana === 'amplop'
@@ -187,7 +175,7 @@
                       </div>
                       <!-- Option 4: Transfer -->
                       <div
-                        @click="selectSumberItem(index, 'transfer')"
+                        @click="item.sumberDana = 'transfer'"
                         :class="[
                           'flex items-center p-3 rounded-xl border cursor-pointer transition-all',
                           item.sumberDana === 'transfer'
@@ -237,14 +225,14 @@
         class="absolute bottom-0 left-0 w-full p-4 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border-t border-gray-100 dark:border-gray-800"
       >
         <button
-          @click="savePemasukan"
+          @click="updatePemasukan"
           :disabled="loading"
           class="w-full h-14 bg-gradient-to-r from-[#059669] to-[#047857] hover:from-[#047857] hover:to-[#059669] text-white font-extrabold text-base rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-primary/30 active:scale-[0.98] transition-all transform disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <span v-if="loading" class="material-symbols-outlined animate-spin">refresh</span>
           <span v-else class="material-symbols-outlined">save</span>
           <span v-if="loading">Menyimpan...</span>
-          <span v-else>Simpan Pemasukan</span>
+          <span v-else>Simpan Perubahan</span>
         </button>
       </div>
     </div>
@@ -252,16 +240,20 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { ref, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
 import { useAuth } from "@/composables/useAuth";
 import { usePemasukan } from "@/composables/usePemasukan";
 import Swal from "sweetalert2";
 import Logout from "@/components/Logout.vue";
 
 const router = useRouter();
+const route = useRoute();
 const { user, logout } = useAuth();
-const { addPemasukan, loading } = usePemasukan();
+const { getPemasukanById, updatePemasukan: updatePemasukanData, loading } = usePemasukan();
+
+// Get transaction ID from route
+const transactionId = route.params.id;
 
 // Form data
 const form = ref({
@@ -269,12 +261,48 @@ const form = ref({
   infaqLaki: "",
   infaqPerempuan: "",
   pemasukanLainnya: [],
-  sumberDana: "kotak-amal",
 });
 
-// Methods
-const selectSumber = (sumber) => {
-  form.value.sumberDana = sumber;
+// Jenis pemasukan yang sedang diedit
+const jenisPemasukan = ref("rutin"); // 'rutin' atau 'lainnya'
+
+// Jenis infaq yang sedang diedit (untuk pemasukan rutin)
+const jenisInfaq = ref("laki"); // 'laki' atau 'perempuan'
+
+// Load transaction data
+const loadTransaction = async () => {
+  const result = await getPemasukanById(transactionId);
+  if (result.success && result.data) {
+    form.value.tanggal = result.data.date;
+
+    // Check if this is a regular income or "Lainnya"
+    if (result.data.source === "Kotak Amal Laki-laki") {
+      jenisPemasukan.value = "rutin";
+      jenisInfaq.value = "laki";
+      form.value.infaqLaki = formatNumber(result.data.amount);
+    } else if (result.data.source === "Kotak Amal Perempuan") {
+      jenisPemasukan.value = "rutin";
+      jenisInfaq.value = "perempuan";
+      form.value.infaqPerempuan = formatNumber(result.data.amount);
+    } else {
+      // This is "Lainnya" income
+      jenisPemasukan.value = "lainnya";
+      form.value.pemasukanLainnya.push({
+        nama: result.data.name,
+        jumlah: formatNumber(result.data.amount),
+        sumberDana: result.data.source === "Amplop" ? "amplop" : "transfer",
+      });
+    }
+  } else {
+    Swal.fire({
+      icon: "error",
+      title: "Gagal",
+      text: result.error || "Gagal memuat data transaksi!",
+      confirmButtonColor: "#059669",
+    }).then(() => {
+      router.back();
+    });
+  }
 };
 
 const tambahPemasukanLainnya = () => {
@@ -289,13 +317,9 @@ const hapusPemasukanLainnya = (index) => {
   form.value.pemasukanLainnya.splice(index, 1);
 };
 
-const selectSumberItem = (index, sumber) => {
-  form.value.pemasukanLainnya[index].sumberDana = sumber;
-};
-
 // Format number dengan separator ribuan
 const formatNumber = (value) => {
-  if (!value) return "";
+  if (!value && value !== 0) return "";
   // Hapus semua karakter non-digit
   const cleanValue = value.toString().replace(/\D/g, "");
   // Format dengan titik sebagai pemisah ribuan
@@ -390,80 +414,89 @@ const formatTanggalHijriah = (dateString) => {
   return `${hijriDay} ${bulanHijriah[hijriMonth]} ${hijriYear} H`;
 };
 
-const savePemasukan = async () => {
-  // Validasi form
-  const infaqLaki = unformatNumber(form.value.infaqLaki);
-  const infaqPerempuan = unformatNumber(form.value.infaqPerempuan);
-  const total = infaqLaki + infaqPerempuan;
+const updatePemasukan = async () => {
+  // Update berdasarkan jenis pemasukan
+  if (jenisPemasukan.value === "rutin") {
+    // Validasi form untuk pemasukan rutin
+    const infaqLaki = unformatNumber(form.value.infaqLaki);
+    const infaqPerempuan = unformatNumber(form.value.infaqPerempuan);
+    const total = infaqLaki + infaqPerempuan;
 
-  if (total === 0) {
-    Swal.fire({
-      icon: "warning",
-      title: "Peringatan",
-      text: "Mohon isi minimal satu pemasukan!",
-      confirmButtonColor: "#13ec80",
-    });
-    return;
-  }
-
-  // Simpan infaq laki-laki
-  if (infaqLaki > 0) {
-    const result = await addPemasukan({
-      date: form.value.tanggal,
-      name: "Infaq Laki-laki",
-      amount: infaqLaki,
-      source: "Kotak Amal Laki-laki",
-      created_by: user.value.id,
-    });
-    if (!result.success) {
+    if (total === 0) {
       Swal.fire({
-        icon: "error",
-        title: "Gagal",
-        text: result.error || "Gagal menyimpan infaq laki-laki!",
-        confirmButtonColor: "#13ec80",
+        icon: "warning",
+        title: "Peringatan",
+        text: "Mohon isi minimal satu pemasukan!",
+        confirmButtonColor: "#059669",
       });
       return;
     }
-  }
 
-  // Simpan infaq perempuan
-  if (infaqPerempuan > 0) {
-    const result = await addPemasukan({
-      date: form.value.tanggal,
-      name: "Infaq Perempuan",
-      amount: infaqPerempuan,
-      source: "Kotak Amal Perempuan",
-      created_by: user.value.id,
-    });
-    if (!result.success) {
+    // Update infaq laki-laki
+    if (jenisInfaq.value === "laki" && infaqLaki > 0) {
+      const result = await updatePemasukanData(transactionId, {
+        date: form.value.tanggal,
+        name: "Infaq Laki-laki",
+        amount: infaqLaki,
+        source: "Kotak Amal Laki-laki",
+      });
+      if (!result.success) {
+        Swal.fire({
+          icon: "error",
+          title: "Gagal",
+          text: result.error || "Gagal mengupdate infaq laki-laki!",
+          confirmButtonColor: "#059669",
+        });
+        return;
+      }
+    }
+
+    // Update infaq perempuan
+    if (jenisInfaq.value === "perempuan" && infaqPerempuan > 0) {
+      const result = await updatePemasukanData(transactionId, {
+        date: form.value.tanggal,
+        name: "Infaq Perempuan",
+        amount: infaqPerempuan,
+        source: "Kotak Amal Perempuan",
+      });
+      if (!result.success) {
+        Swal.fire({
+          icon: "error",
+          title: "Gagal",
+          text: result.error || "Gagal mengupdate infaq perempuan!",
+          confirmButtonColor: "#059669",
+        });
+        return;
+      }
+    }
+  } else if (jenisPemasukan.value === "lainnya") {
+    // Validasi form untuk pemasukan lainnya
+    if (form.value.pemasukanLainnya.length === 0) {
       Swal.fire({
-        icon: "error",
-        title: "Gagal",
-        text: result.error || "Gagal menyimpan infaq perempuan!",
-        confirmButtonColor: "#13ec80",
+        icon: "warning",
+        title: "Peringatan",
+        text: "Mohon isi minimal satu pemasukan!",
+        confirmButtonColor: "#059669",
       });
       return;
     }
-  }
 
-  // Simpan pemasukan lainnya
-  if (form.value.pemasukanLainnya.length > 0) {
+    // Update pemasukan lainnya
     for (const item of form.value.pemasukanLainnya) {
       const jumlah = unformatNumber(item.jumlah);
       if (jumlah > 0) {
-        const result = await addPemasukan({
+        const result = await updatePemasukanData(transactionId, {
           date: form.value.tanggal,
           name: item.nama || "Pemasukan Lainnya",
           amount: jumlah,
           source: item.sumberDana === "amplop" ? "Amplop" : "Transfer",
-          created_by: user.value.id,
         });
         if (!result.success) {
           Swal.fire({
             icon: "error",
             title: "Gagal",
-            text: result.error || "Gagal menyimpan pemasukan lainnya!",
-            confirmButtonColor: "#13ec80",
+            text: result.error || "Gagal mengupdate pemasukan lainnya!",
+            confirmButtonColor: "#059669",
           });
           return;
         }
@@ -474,12 +507,17 @@ const savePemasukan = async () => {
   Swal.fire({
     icon: "success",
     title: "Berhasil",
-    text: "Pemasukan berhasil disimpan!",
-    confirmButtonColor: "#13ec80",
+    text: "Pemasukan berhasil diupdate!",
+    confirmButtonColor: "#059669",
   }).then(() => {
-    router.push("/");
+    router.back();
   });
 };
+
+// Lifecycle
+onMounted(() => {
+  loadTransaction();
+});
 </script>
 
 <style scoped>

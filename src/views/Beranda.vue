@@ -105,7 +105,8 @@
           <div
             v-for="transaction in recentTransactions"
             :key="transaction.id"
-            class="flex items-center justify-between p-4 bg-white rounded-2xl border border-primary/5 shadow-sm"
+            @click="handleTransactionClick(transaction)"
+            class="flex items-center justify-between p-4 bg-white rounded-2xl border border-primary/5 shadow-sm cursor-pointer hover:border-primary/30 transition-colors"
           >
             <div class="flex items-center gap-4">
               <div
@@ -183,6 +184,64 @@
         </button>
       </div>
     </div>
+
+    <!-- Action Modal for Transaction -->
+    <div
+      v-if="showActionModal && selectedTransaction"
+      class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+    >
+      <div class="bg-white rounded-2xl p-6 w-full max-w-sm">
+        <h3 class="text-lg font-bold text-center mb-4">Aksi Transaksi</h3>
+        <div class="mb-4 p-4 bg-gray-50 rounded-xl">
+          <p class="text-sm font-bold text-gray-900">{{ selectedTransaction.title }}</p>
+          <p class="text-xs text-gray-500 mt-1">
+            {{ selectedTransaction.time }} • {{ selectedTransaction.category }}
+          </p>
+          <p
+            :class="[
+              'text-sm font-bold mt-2',
+              selectedTransaction.type === 'income' ? 'text-primary' : 'text-red-500',
+            ]"
+          >
+            {{ selectedTransaction.type === "income" ? "+" : "-"
+            }}{{ formatCurrency(selectedTransaction.amount) }}
+          </p>
+        </div>
+        <div class="space-y-3">
+          <button
+            @click="handleEditTransaction"
+            class="w-full flex items-center gap-4 p-4 rounded-xl bg-blue-50 border border-blue-200 hover:bg-blue-100 transition-colors"
+          >
+            <div
+              class="w-12 h-12 rounded-full bg-blue-500 text-white flex items-center justify-center"
+            >
+              <span class="material-symbols-outlined">edit</span>
+            </div>
+            <span class="font-bold text-blue-500">Ubah Transaksi</span>
+          </button>
+          <button
+            @click="handleDeleteTransaction"
+            class="w-full flex items-center gap-4 p-4 rounded-xl bg-red-50 border border-red-200 hover:bg-red-100 transition-colors"
+          >
+            <div
+              class="w-12 h-12 rounded-full bg-red-500 text-white flex items-center justify-center"
+            >
+              <span class="material-symbols-outlined">delete</span>
+            </div>
+            <span class="font-bold text-red-500">Hapus Transaksi</span>
+          </button>
+        </div>
+        <button
+          @click="
+            showActionModal = false;
+            selectedTransaction = null;
+          "
+          class="w-full mt-6 py-3 text-gray-500 font-medium hover:text-gray-700 transition-colors"
+        >
+          Batal
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -191,12 +250,17 @@ import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useAuth } from "@/composables/useAuth";
 import { useLaporan } from "@/composables/useLaporan";
+import { usePemasukan } from "@/composables/usePemasukan";
+import { usePengeluaran } from "@/composables/usePengeluaran";
 import BottomMenu from "@/components/BottomMenu.vue";
 import Logout from "@/components/Logout.vue";
+import Swal from "sweetalert2";
 
 const router = useRouter();
 const { user, logout } = useAuth();
 const { getTransaksi } = useLaporan();
+const { deletePemasukan } = usePemasukan();
+const { deletePengeluaran } = usePengeluaran();
 
 // State
 const loading = ref(false);
@@ -205,6 +269,8 @@ const dates = ref([]);
 const selectedDate = ref(null);
 const recentTransactions = ref([]);
 const showAddModal = ref(false);
+const selectedTransaction = ref(null);
+const showActionModal = ref(false);
 
 // Helper function untuk format tanggal Indonesia
 const formatDateIndo = (dateString) => {
@@ -234,8 +300,9 @@ const getTransactionIcon = (transaction) => {
     if (
       transaction.expense_type?.toLowerCase().includes("konsumsi") ||
       transaction.expense_type?.toLowerCase().includes("takjil")
-    )
+    ) {
       return "restaurant";
+    }
     return "trending_down";
   }
 };
@@ -289,15 +356,37 @@ const groupTransactionsByDate = () => {
 const updateRecentTransactions = (date) => {
   const selectedDateData = dates.value.find((d) => d.date === date);
   if (selectedDateData) {
-    recentTransactions.value = selectedDateData.transactions.map((transaction) => ({
-      id: transaction.id,
-      title: transaction.name,
-      time: formatTime(transaction.created_at),
-      category: transaction.type === "pemasukan" ? transaction.source : transaction.expense_type,
-      amount: transaction.amount,
-      type: transaction.type === "pemasukan" ? "income" : "expense",
-      icon: getTransactionIcon(transaction),
-    }));
+    recentTransactions.value = selectedDateData.transactions
+      .map((transaction) => ({
+        id: transaction.id,
+        title: transaction.name,
+        time: formatTime(transaction.created_at),
+        category: transaction.type === "pemasukan" ? transaction.source : transaction.expense_type,
+        amount: transaction.amount,
+        type: transaction.type === "pemasukan" ? "income" : "expense",
+        icon: getTransactionIcon(transaction),
+        originalTransaction: transaction, // Simpan transaksi asli untuk sorting
+      }))
+      .sort((a, b) => {
+        // Urutkan: Pemasukan Rutin (Laki-laki), Pemasukan Rutin (Perempuan), Pemasukan Lainnya, Pengeluaran Rutin, Pengeluaran Lainnya
+        const getPriority = (item) => {
+          if (item.type === "income") {
+            // Pemasukan Rutin: Kotak Amal Laki-laki dulu, baru Kotak Amal Perempuan, baru Pemasukan Lainnya
+            if (item.originalTransaction.source?.toLowerCase().includes("laki-laki")) return 1;
+            if (item.originalTransaction.source?.toLowerCase().includes("perempuan")) return 2;
+            return 3; // Pemasukan Lainnya
+          } else {
+            // Pengeluaran Rutin (Honor) dulu, baru Pengeluaran Lainnya
+            if (item.originalTransaction.expense_type?.toLowerCase().includes("rutin")) return 4;
+            return 5; // Pengeluaran Lainnya
+          }
+        };
+
+        const priorityA = getPriority(a);
+        const priorityB = getPriority(b);
+
+        return priorityA - priorityB;
+      });
   }
 };
 
@@ -386,6 +475,82 @@ const goToInputPengeluaran = () => {
 
 const goToLaporan = () => {
   router.push("/laporan");
+};
+
+// Handle klik pada transaksi
+const handleTransactionClick = (transaction) => {
+  selectedTransaction.value = transaction;
+  showActionModal.value = true;
+};
+
+// Hapus transaksi
+const handleDeleteTransaction = async () => {
+  if (!selectedTransaction.value) return;
+
+  const result = await Swal.fire({
+    icon: "warning",
+    title: "Hapus Transaksi",
+    text: `Apakah Anda yakin ingin menghapus transaksi "${selectedTransaction.value.title}"?`,
+    showCancelButton: true,
+    confirmButtonColor: "#ef4444",
+    cancelButtonColor: "#6b7280",
+    confirmButtonText: "Ya, Hapus",
+    cancelButtonText: "Batal",
+  });
+
+  if (result.isConfirmed) {
+    try {
+      let deleteResult;
+      if (selectedTransaction.value.type === "income") {
+        deleteResult = await deletePemasukan(selectedTransaction.value.id);
+      } else {
+        deleteResult = await deletePengeluaran(selectedTransaction.value.id);
+      }
+
+      if (deleteResult.success) {
+        await Swal.fire({
+          icon: "success",
+          title: "Berhasil",
+          text: "Transaksi berhasil dihapus!",
+          confirmButtonColor: "#059669",
+        });
+        // Refresh data transaksi
+        await fetchTransactions();
+      } else {
+        await Swal.fire({
+          icon: "error",
+          title: "Gagal",
+          text: deleteResult.error || "Gagal menghapus transaksi!",
+          confirmButtonColor: "#059669",
+        });
+      }
+    } catch (error) {
+      await Swal.fire({
+        icon: "error",
+        title: "Gagal",
+        text: error.message || "Terjadi kesalahan!",
+        confirmButtonColor: "#059669",
+      });
+    }
+  }
+
+  showActionModal.value = false;
+  selectedTransaction.value = null;
+};
+
+// Ubah transaksi
+const handleEditTransaction = () => {
+  if (!selectedTransaction.value) return;
+
+  // Navigasi ke halaman edit berdasarkan tipe transaksi
+  if (selectedTransaction.value.type === "income") {
+    router.push(`/edit-pemasukan/${selectedTransaction.value.id}`);
+  } else {
+    router.push(`/edit-pengeluaran/${selectedTransaction.value.id}`);
+  }
+
+  showActionModal.value = false;
+  selectedTransaction.value = null;
 };
 
 // Lifecycle

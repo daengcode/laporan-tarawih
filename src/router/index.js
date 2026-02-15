@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from "vue-router";
 import Beranda from "../views/Beranda.vue";
 import InputPemasukan from "../views/InputPemasukan.vue";
 import InputPengeluaran from "../views/InputPengeluaran.vue";
+import EditPemasukan from "../views/EditPemasukan.vue";
+import EditPengeluaran from "../views/EditPengeluaran.vue";
 import Laporan from "../views/Laporan.vue";
 import Login from "../views/Login.vue";
 import { useAuth } from "@/composables/useAuth";
@@ -31,6 +33,18 @@ const router = createRouter({
       path: "/input-pengeluaran",
       name: "input-pengeluaran",
       component: InputPengeluaran,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/edit-pemasukan/:id",
+      name: "edit-pemasukan",
+      component: EditPemasukan,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/edit-pengeluaran/:id",
+      name: "edit-pengeluaran",
+      component: EditPengeluaran,
       meta: { requiresAuth: true },
     },
     {

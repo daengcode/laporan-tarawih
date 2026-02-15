@@ -8,7 +8,7 @@
         class="flex items-center bg-white dark:bg-background-dark p-4 pb-2 justify-between sticky top-0 z-10 border-b border-gray-100 dark:border-gray-800"
       >
         <button
-          @click="router.push('/')"
+          @click="router.back()"
           class="text-gray-900 dark:text-white flex size-10 shrink-0 items-center justify-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
         >
           <span class="material-symbols-outlined">arrow_back</span>
@@ -16,7 +16,7 @@
         <h2
           class="text-gray-900 dark:text-white text-lg font-bold leading-tight tracking-tight flex-1 ml-4"
         >
-          Tambah Pemasukan
+          Edit Pengeluaran
         </h2>
         <Logout />
       </div>
@@ -45,25 +45,25 @@
             </div>
           </section>
 
-          <!-- Section: Pemasukan Kotak Amal -->
-          <section>
+          <!-- Section: Pengeluaran Utama -->
+          <section v-if="jenisPengeluaran === 'rutin'">
             <h3
               class="text-gray-900 dark:text-white text-base font-bold leading-tight tracking-tight mb-3 flex items-center gap-2"
             >
-              Pemasukan Rutin
+              Pengeluaran Rutin
             </h3>
             <div class="grid grid-cols-1 gap-4">
-              <label class="flex flex-col gap-2">
+              <label v-if="jenisRutin === 'ceramah'" class="flex flex-col gap-2">
                 <p class="text-gray-600 dark:text-gray-400 text-sm font-semibold ml-1">
-                  Infaq Laki-laki
+                  Honor Ceramah
                 </p>
                 <div class="relative">
                   <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <span class="text-gray-400 font-bold text-sm">Rp</span>
                   </div>
                   <input
-                    v-model="form.infaqLaki"
-                    @input="formatNumberInput($event, 'infaqLaki')"
+                    v-model="form.ceramah"
+                    @input="formatNumberInput($event, 'ceramah')"
                     class="form-input flex w-full rounded-xl text-gray-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/20 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:border-primary h-14 pl-10 pr-4 text-base font-bold placeholder:text-gray-300"
                     inputmode="numeric"
                     placeholder="0"
@@ -71,17 +71,17 @@
                   />
                 </div>
               </label>
-              <label class="flex flex-col gap-2">
+              <label v-if="jenisRutin === 'imam'" class="flex flex-col gap-2">
                 <p class="text-gray-600 dark:text-gray-400 text-sm font-semibold ml-1">
-                  Infaq Perempuan
+                  Honor Imam
                 </p>
                 <div class="relative">
                   <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <span class="text-gray-400 font-bold text-sm">Rp</span>
                   </div>
                   <input
-                    v-model="form.infaqPerempuan"
-                    @input="formatNumberInput($event, 'infaqPerempuan')"
+                    v-model="form.imam"
+                    @input="formatNumberInput($event, 'imam')"
                     class="form-input flex w-full rounded-xl text-gray-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/20 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:border-primary h-14 pl-10 pr-4 text-base font-bold placeholder:text-gray-300"
                     inputmode="numeric"
                     placeholder="0"
@@ -92,47 +92,37 @@
             </div>
           </section>
 
-          <!-- Section: Pemasukan Lainnya -->
-          <section class="space-y-4">
+          <!-- Section: Pengeluaran Lainnya -->
+          <section v-if="jenisPengeluaran === 'lainnya'" class="space-y-4">
             <h3
               class="text-gray-900 dark:text-white text-base font-bold leading-tight tracking-tight mb-3 flex items-center gap-2"
             >
-              Pemasukan Lainnya
+              Pengeluaran Lainnya
             </h3>
-            <div class="space-y-3">
-              <!-- Tombol Tambah -->
-              <button
-                @click="tambahPemasukanLainnya"
-                class="w-full flex items-center gap-2 p-3 rounded-xl border-2 border-dashed border-primary/30 hover:border-primary/50 hover:bg-primary/5 transition-all"
-              >
-                <span class="material-symbols-outlined text-primary">add</span>
-                <span class="text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >Tambah Pemasukan</span
-                >
-              </button>
-            </div>
-            <!-- List Pemasukan Lainnya -->
-            <div v-if="form.pemasukanLainnya.length > 0" class="space-y-3">
+            <!-- List Pengeluaran Lainnya -->
+            <div v-if="form.pengeluaranLainnya.length > 0" class="space-y-3">
               <div
-                v-for="(item, index) in form.pemasukanLainnya"
+                v-for="(item, index) in form.pengeluaranLainnya"
                 :key="index"
-                class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4"
+                class="bg-white dark:bg-gray-800 rounded-xl border border-orange-200 dark:border-orange-700 p-4"
               >
                 <div class="grid grid-cols-1 gap-4">
                   <label class="flex flex-col gap-2">
-                    <p class="text-gray-600 dark:text-gray-400 text-sm font-semibold ml-1">Nama</p>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm font-semibold ml-1">
+                      Nama Keperluan
+                    </p>
                     <div class="relative">
                       <input
                         v-model="item.nama"
-                        class="form-input flex w-full rounded-xl text-gray-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/20 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:border-primary h-14 px-4 text-base font-bold placeholder:text-gray-300"
-                        placeholder="Masukkan nama donatur"
+                        class="form-input flex w-full rounded-xl text-gray-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-orange-200 dark:focus:ring-orange-700 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:border-orange-500 h-14 px-4 text-base font-bold placeholder:text-gray-300"
+                        placeholder="Contoh: Perbaikan AC"
                         type="text"
                       />
                     </div>
                   </label>
                   <label class="flex flex-col gap-2">
                     <p class="text-gray-600 dark:text-gray-400 text-sm font-semibold ml-1">
-                      Jumlah Pemasukan
+                      Biaya Keperluan
                     </p>
                     <div class="relative">
                       <div
@@ -141,91 +131,91 @@
                         <span class="text-gray-400 font-bold text-sm">Rp</span>
                       </div>
                       <input
-                        v-model="item.jumlah"
-                        @input="formatNumberInput($event, 'jumlah', index)"
-                        class="form-input flex w-full rounded-xl text-gray-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/20 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:border-primary h-14 pl-10 pr-4 text-base font-bold placeholder:text-gray-300"
+                        v-model="item.biaya"
+                        @input="formatNumberInput($event, 'biaya', index)"
+                        class="form-input flex w-full rounded-xl text-gray-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-orange-200 dark:focus:ring-orange-700 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:border-orange-500 h-14 pl-10 pr-4 text-base font-bold placeholder:text-gray-300"
                         inputmode="numeric"
                         placeholder="0"
                         type="text"
                       />
                     </div>
                   </label>
-                  <div class="space-y-3">
-                    <p class="text-gray-600 dark:text-gray-400 text-sm font-semibold ml-1">
-                      Sumber Dana
-                    </p>
-                    <div class="grid grid-cols-2 gap-3">
-                      <!-- Option 2: Amplop -->
+                </div>
+                <div class="space-y-2 mt-3">
+                  <p class="text-gray-600 dark:text-gray-400 text-sm font-semibold ml-1">
+                    Jenis Keperluan
+                  </p>
+                  <div class="grid grid-cols-2 gap-3">
+                    <!-- Option 2: Kebersihan -->
+                    <div
+                      @click="item.jenisKeperluan = 'kebersihan'"
+                      :class="[
+                        'flex items-center p-3 rounded-xl border cursor-pointer transition-all',
+                        item.jenisKeperluan === 'kebersihan'
+                          ? 'border-orange-500 bg-orange-50'
+                          : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-orange-400',
+                      ]"
+                    >
                       <div
-                        @click="selectSumberItem(index, 'amplop')"
                         :class="[
-                          'flex items-center p-3 rounded-xl border cursor-pointer transition-all',
-                          item.sumberDana === 'amplop'
-                            ? 'border-primary bg-primary/10'
-                            : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-primary/50',
+                          'w-8 h-8 rounded-full flex items-center justify-center mr-3',
+                          item.jenisKeperluan === 'kebersihan'
+                            ? 'bg-orange-500 text-white'
+                            : 'bg-gray-100 dark:bg-gray-700 text-gray-500',
                         ]"
                       >
-                        <div
-                          :class="[
-                            'w-8 h-8 rounded-full flex items-center justify-center mr-3',
-                            item.sumberDana === 'amplop'
-                              ? 'bg-primary text-white'
-                              : 'bg-gray-100 dark:bg-gray-700 text-gray-500',
-                          ]"
-                        >
-                          <span class="material-symbols-outlined text-lg">mail</span>
-                        </div>
-                        <span
-                          :class="[
-                            'text-sm font-semibold',
-                            item.sumberDana === 'amplop'
-                              ? 'text-primary'
-                              : 'text-gray-700 dark:text-gray-300',
-                          ]"
-                          >Amplop</span
-                        >
+                        <span class="material-symbols-outlined text-lg">cleaning_services</span>
                       </div>
-                      <!-- Option 4: Transfer -->
-                      <div
-                        @click="selectSumberItem(index, 'transfer')"
+                      <span
                         :class="[
-                          'flex items-center p-3 rounded-xl border cursor-pointer transition-all',
-                          item.sumberDana === 'transfer'
-                            ? 'border-primary bg-primary/10'
-                            : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-primary/50',
+                          'text-sm font-semibold',
+                          item.jenisKeperluan === 'kebersihan'
+                            ? 'text-orange-700'
+                            : 'text-gray-700 dark:text-gray-300',
+                        ]"
+                        >Kebersihan</span
+                      >
+                    </div>
+                    <!-- Option 3: Buka Puasa -->
+                    <div
+                      @click="item.jenisKeperluan = 'lainnya'"
+                      :class="[
+                        'flex items-center p-3 rounded-xl border cursor-pointer transition-all',
+                        item.jenisKeperluan === 'lainnya'
+                          ? 'border-orange-500 bg-orange-50'
+                          : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-orange-400',
+                      ]"
+                    >
+                      <div
+                        :class="[
+                          'w-8 h-8 rounded-full flex items-center justify-center mr-3',
+                          item.jenisKeperluan === 'lainnya'
+                            ? 'bg-orange-500 text-white'
+                            : 'bg-gray-100 dark:bg-gray-700 text-gray-500',
                         ]"
                       >
-                        <div
-                          :class="[
-                            'w-8 h-8 rounded-full flex items-center justify-center mr-3',
-                            item.sumberDana === 'transfer'
-                              ? 'bg-primary text-white'
-                              : 'bg-gray-100 dark:bg-gray-700 text-gray-500',
-                          ]"
-                        >
-                          <span class="material-symbols-outlined text-lg">credit_card</span>
-                        </div>
-                        <span
-                          :class="[
-                            'text-sm font-semibold',
-                            item.sumberDana === 'transfer'
-                              ? 'text-primary'
-                              : 'text-gray-700 dark:text-gray-300',
-                          ]"
-                          >Transfer</span
-                        >
+                        <span class="material-symbols-outlined text-lg">restaurant</span>
                       </div>
+                      <span
+                        :class="[
+                          'text-sm font-semibold',
+                          item.jenisKeperluan === 'lainnya'
+                            ? 'text-orange-700'
+                            : 'text-gray-700 dark:text-gray-300',
+                        ]"
+                        >Buka Puasa</span
+                      >
                     </div>
                   </div>
-                  <!-- Tombol Hapus -->
-                  <button
-                    @click="hapusPemasukanLainnya(index)"
-                    class="flex items-center justify-center w-10 h-10 rounded-full bg-red-50 hover:bg-red-100 text-red-500 transition-colors"
-                    title="Hapus"
-                  >
-                    <span class="material-symbols-outlined">delete</span>
-                  </button>
                 </div>
+                <!-- Tombol Hapus -->
+                <button
+                  @click="hapusPengeluaranLainnya(index)"
+                  class="flex items-center justify-center w-10 h-10 rounded-full bg-red-50 hover:bg-red-100 text-red-500 transition-colors mt-2"
+                  title="Hapus"
+                >
+                  <span class="material-symbols-outlined">delete</span>
+                </button>
               </div>
             </div>
           </section>
@@ -237,14 +227,14 @@
         class="absolute bottom-0 left-0 w-full p-4 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border-t border-gray-100 dark:border-gray-800"
       >
         <button
-          @click="savePemasukan"
+          @click="updatePengeluaran"
           :disabled="loading"
           class="w-full h-14 bg-gradient-to-r from-[#059669] to-[#047857] hover:from-[#047857] hover:to-[#059669] text-white font-extrabold text-base rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-primary/30 active:scale-[0.98] transition-all transform disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <span v-if="loading" class="material-symbols-outlined animate-spin">refresh</span>
           <span v-else class="material-symbols-outlined">save</span>
           <span v-if="loading">Menyimpan...</span>
-          <span v-else>Simpan Pemasukan</span>
+          <span v-else>Simpan Perubahan</span>
         </button>
       </div>
     </div>
@@ -252,50 +242,86 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { ref, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
 import { useAuth } from "@/composables/useAuth";
-import { usePemasukan } from "@/composables/usePemasukan";
+import { usePengeluaran } from "@/composables/usePengeluaran";
 import Swal from "sweetalert2";
 import Logout from "@/components/Logout.vue";
 
 const router = useRouter();
+const route = useRoute();
 const { user, logout } = useAuth();
-const { addPemasukan, loading } = usePemasukan();
+const { getPengeluaranById, updatePengeluaran: updatePengeluaranData, loading } = usePengeluaran();
+
+// Get transaction ID from route
+const transactionId = route.params.id;
 
 // Form data
 const form = ref({
   tanggal: new Date().toISOString().split("T")[0],
-  infaqLaki: "",
-  infaqPerempuan: "",
-  pemasukanLainnya: [],
-  sumberDana: "kotak-amal",
+  ceramah: "",
+  imam: "",
+  pengeluaranLainnya: [],
 });
 
-// Methods
-const selectSumber = (sumber) => {
-  form.value.sumberDana = sumber;
+// Jenis pengeluaran yang sedang diedit
+const jenisPengeluaran = ref("rutin"); // 'rutin' atau 'lainnya'
+
+// Jenis pengeluaran rutin yang sedang diedit
+const jenisRutin = ref("ceramah"); // 'ceramah' atau 'imam'
+
+// Load transaction data
+const loadTransaction = async () => {
+  const result = await getPengeluaranById(transactionId);
+  if (result.success && result.data) {
+    form.value.tanggal = result.data.date;
+
+    // Check if this is a regular expense or "Lainnya"
+    if (result.data.name === "Honor Ceramah") {
+      jenisPengeluaran.value = "rutin";
+      jenisRutin.value = "ceramah";
+      form.value.ceramah = formatNumber(result.data.amount);
+    } else if (result.data.name === "Honor Imam") {
+      jenisPengeluaran.value = "rutin";
+      jenisRutin.value = "imam";
+      form.value.imam = formatNumber(result.data.amount);
+    } else {
+      // This is "Lainnya" expense
+      jenisPengeluaran.value = "lainnya";
+      form.value.pengeluaranLainnya.push({
+        nama: result.data.name,
+        biaya: formatNumber(result.data.amount),
+        jenisKeperluan: result.data.expense_type === "Kebersihan" ? "kebersihan" : "lainnya",
+      });
+    }
+  } else {
+    Swal.fire({
+      icon: "error",
+      title: "Gagal",
+      text: result.error || "Gagal memuat data transaksi!",
+      confirmButtonColor: "#059669",
+    }).then(() => {
+      router.back();
+    });
+  }
 };
 
-const tambahPemasukanLainnya = () => {
-  form.value.pemasukanLainnya.push({
+const tambahPengeluaranLainnya = () => {
+  form.value.pengeluaranLainnya.push({
     nama: "",
-    jumlah: "",
-    sumberDana: "amplop",
+    biaya: "",
+    jenisKeperluan: "kebersihan",
   });
 };
 
-const hapusPemasukanLainnya = (index) => {
-  form.value.pemasukanLainnya.splice(index, 1);
-};
-
-const selectSumberItem = (index, sumber) => {
-  form.value.pemasukanLainnya[index].sumberDana = sumber;
+const hapusPengeluaranLainnya = (index) => {
+  form.value.pengeluaranLainnya.splice(index, 1);
 };
 
 // Format number dengan separator ribuan
 const formatNumber = (value) => {
-  if (!value) return "";
+  if (!value && value !== 0) return "";
   // Hapus semua karakter non-digit
   const cleanValue = value.toString().replace(/\D/g, "");
   // Format dengan titik sebagai pemisah ribuan
@@ -308,7 +334,7 @@ const formatNumberInput = (event, field, index = null) => {
   const formattedValue = formatNumber(inputValue);
 
   if (index !== null) {
-    form.value.pemasukanLainnya[index][field] = formattedValue;
+    form.value.pengeluaranLainnya[index][field] = formattedValue;
   } else {
     form.value[field] = formattedValue;
   }
@@ -390,80 +416,89 @@ const formatTanggalHijriah = (dateString) => {
   return `${hijriDay} ${bulanHijriah[hijriMonth]} ${hijriYear} H`;
 };
 
-const savePemasukan = async () => {
-  // Validasi form
-  const infaqLaki = unformatNumber(form.value.infaqLaki);
-  const infaqPerempuan = unformatNumber(form.value.infaqPerempuan);
-  const total = infaqLaki + infaqPerempuan;
+const updatePengeluaran = async () => {
+  // Update berdasarkan jenis pengeluaran
+  if (jenisPengeluaran.value === "rutin") {
+    // Validasi form untuk pengeluaran rutin
+    const ceramah = unformatNumber(form.value.ceramah);
+    const imam = unformatNumber(form.value.imam);
+    const total = ceramah + imam;
 
-  if (total === 0) {
-    Swal.fire({
-      icon: "warning",
-      title: "Peringatan",
-      text: "Mohon isi minimal satu pemasukan!",
-      confirmButtonColor: "#13ec80",
-    });
-    return;
-  }
-
-  // Simpan infaq laki-laki
-  if (infaqLaki > 0) {
-    const result = await addPemasukan({
-      date: form.value.tanggal,
-      name: "Infaq Laki-laki",
-      amount: infaqLaki,
-      source: "Kotak Amal Laki-laki",
-      created_by: user.value.id,
-    });
-    if (!result.success) {
+    if (total === 0) {
       Swal.fire({
-        icon: "error",
-        title: "Gagal",
-        text: result.error || "Gagal menyimpan infaq laki-laki!",
-        confirmButtonColor: "#13ec80",
+        icon: "warning",
+        title: "Peringatan",
+        text: "Mohon isi minimal satu pengeluaran!",
+        confirmButtonColor: "#059669",
       });
       return;
     }
-  }
 
-  // Simpan infaq perempuan
-  if (infaqPerempuan > 0) {
-    const result = await addPemasukan({
-      date: form.value.tanggal,
-      name: "Infaq Perempuan",
-      amount: infaqPerempuan,
-      source: "Kotak Amal Perempuan",
-      created_by: user.value.id,
-    });
-    if (!result.success) {
+    // Update honor ceramah
+    if (jenisRutin.value === "ceramah" && ceramah > 0) {
+      const result = await updatePengeluaranData(transactionId, {
+        date: form.value.tanggal,
+        name: "Honor Ceramah",
+        amount: ceramah,
+        expense_type: "Rutin",
+      });
+      if (!result.success) {
+        Swal.fire({
+          icon: "error",
+          title: "Gagal",
+          text: result.error || "Gagal mengupdate honor ceramah!",
+          confirmButtonColor: "#059669",
+        });
+        return;
+      }
+    }
+
+    // Update honor imam
+    if (jenisRutin.value === "imam" && imam > 0) {
+      const result = await updatePengeluaranData(transactionId, {
+        date: form.value.tanggal,
+        name: "Honor Imam",
+        amount: imam,
+        expense_type: "Rutin",
+      });
+      if (!result.success) {
+        Swal.fire({
+          icon: "error",
+          title: "Gagal",
+          text: result.error || "Gagal mengupdate honor imam!",
+          confirmButtonColor: "#059669",
+        });
+        return;
+      }
+    }
+  } else if (jenisPengeluaran.value === "lainnya") {
+    // Validasi form untuk pengeluaran lainnya
+    if (form.value.pengeluaranLainnya.length === 0) {
       Swal.fire({
-        icon: "error",
-        title: "Gagal",
-        text: result.error || "Gagal menyimpan infaq perempuan!",
-        confirmButtonColor: "#13ec80",
+        icon: "warning",
+        title: "Peringatan",
+        text: "Mohon isi minimal satu pengeluaran!",
+        confirmButtonColor: "#059669",
       });
       return;
     }
-  }
 
-  // Simpan pemasukan lainnya
-  if (form.value.pemasukanLainnya.length > 0) {
-    for (const item of form.value.pemasukanLainnya) {
-      const jumlah = unformatNumber(item.jumlah);
-      if (jumlah > 0) {
-        const result = await addPemasukan({
+    // Update pengeluaran lainnya
+    for (const item of form.value.pengeluaranLainnya) {
+      const biaya = unformatNumber(item.biaya);
+      if (biaya > 0) {
+        const result = await updatePengeluaranData(transactionId, {
           date: form.value.tanggal,
-          name: item.nama || "Pemasukan Lainnya",
-          amount: jumlah,
-          source: item.sumberDana === "amplop" ? "Amplop" : "Transfer",
-          created_by: user.value.id,
+          name: item.nama || "Pengeluaran Lainnya",
+          amount: biaya,
+          expense_type: item.jenisKeperluan === "kebersihan" ? "Kebersihan" : "Buka Puasa",
         });
         if (!result.success) {
           Swal.fire({
             icon: "error",
             title: "Gagal",
-            text: result.error || "Gagal menyimpan pemasukan lainnya!",
-            confirmButtonColor: "#13ec80",
+            text: result.error || "Gagal mengupdate pengeluaran lainnya!",
+            confirmButtonColor: "#059669",
           });
           return;
         }
@@ -474,12 +509,17 @@ const savePemasukan = async () => {
   Swal.fire({
     icon: "success",
     title: "Berhasil",
-    text: "Pemasukan berhasil disimpan!",
-    confirmButtonColor: "#13ec80",
+    text: "Pengeluaran berhasil diupdate!",
+    confirmButtonColor: "#059669",
   }).then(() => {
-    router.push("/");
+    router.back();
   });
 };
+
+// Lifecycle
+onMounted(() => {
+  loadTransaction();
+});
 </script>
 
 <style scoped>
