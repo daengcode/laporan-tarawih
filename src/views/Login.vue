@@ -89,7 +89,7 @@
         <!-- Submit Button -->
         <button
           type="submit"
-          :disabled="loading"
+          :disabled="loading || !isFormComplete"
           class="w-full bg-primary hover:bg-primary/90 text-[#0a2014] font-bold py-4 rounded-lg shadow-lg shadow-primary/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2 mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <span v-if="loading" class="material-symbols-outlined animate-spin">refresh</span>
@@ -110,7 +110,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useAuth } from "@/composables/useAuth";
 
@@ -125,6 +125,11 @@ const form = ref({
 });
 
 const showPassword = ref(false);
+
+// Computed property to check if form is complete
+const isFormComplete = computed(() => {
+  return form.value.username.trim() !== "" && form.value.password.trim() !== "";
+});
 
 // Methods
 const togglePasswordVisibility = () => {
