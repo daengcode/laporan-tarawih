@@ -451,7 +451,7 @@ const copyLink = async () => {
 const shareToWhatsapp = () => {
   const link = getShareLink();
   const message = `Laporan Amaliyah Ramadhan 1447 H
-  Masjid Baiturrahim tanggal ${selectedDateData.display}.
+  Masjid Baiturrahim tanggal ${formatDateIndo(dateParam.value)}.
   Silakan lihat laporan lengkap di:
   ${link}`;
   const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
