@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+
+<html class="light" lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Input Pemasukan - Ramadhan Financial Report</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec80",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#102219",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Manrope', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark min-h-screen flex justify-center">
+<div class="relative flex h-full min-h-screen w-full max-w-md flex-col bg-white dark:bg-background-dark overflow-x-hidden shadow-xl">
+<!-- Top Navigation Bar -->
+<div class="flex items-center bg-white dark:bg-background-dark p-4 pb-2 justify-between sticky top-0 z-10 border-b border-gray-100 dark:border-gray-800">
+<div class="text-gray-900 dark:text-white flex size-10 shrink-0 items-center justify-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors">
+<span class="material-symbols-outlined">arrow_back</span>
+</div>
+<h2 class="text-gray-900 dark:text-white text-lg font-bold leading-tight tracking-tight flex-1 ml-4">Input Pemasukan</h2>
+<div class="size-10"></div> <!-- Spacer for balance -->
+</div>
+<div class="flex-1 overflow-y-auto pb-24">
+<div class="p-4 space-y-6"><section class="mb-2 p-4 rounded-xl bg-primary/5 border border-dashed border-primary/30">
+<div class="flex items-center justify-between text-sm">
+<span class="text-gray-600 dark:text-gray-400 font-medium">Tanggal Laporan</span>
+<span class="font-bold text-gray-900 dark:text-white flex items-center gap-1">
+                            12 Ramadhan 1445 H
+                            <span class="material-symbols-outlined text-base text-primary">calendar_month</span>
+</span>
+</div>
+</section>
+<!-- Section 1: Jumlah Pemasukan -->
+<!-- Section 2: Jumlah Jamaah -->
+<section>
+<h3 class="text-gray-900 dark:text-white text-base font-bold leading-tight tracking-tight mb-3 flex items-center gap-2">Pemasukan Kotak Amal</h3>
+<div class="grid grid-cols-1 gap-4">
+<label class="flex flex-col gap-2">
+<p class="text-gray-600 dark:text-gray-400 text-sm font-semibold ml-1">Infaq Laki-laki</p>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="text-gray-400 font-bold text-sm">Rp</span>
+</div>
+<input class="form-input flex w-full rounded-xl text-gray-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/20 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:border-primary h-14 pl-10 pr-4 text-base font-bold placeholder:text-gray-300" inputmode="numeric" placeholder="0" type="number"/>
+</div>
+</label>
+<label class="flex flex-col gap-2">
+<p class="text-gray-600 dark:text-gray-400 text-sm font-semibold ml-1">Infaq Perempuan</p>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="text-gray-400 font-bold text-sm">Rp</span>
+</div>
+<input class="form-input flex w-full rounded-xl text-gray-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/20 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:border-primary h-14 pl-10 pr-4 text-base font-bold placeholder:text-gray-300" inputmode="numeric" placeholder="0" type="number"/>
+</div>
+</label>
+</div>
+</section>
+<!-- Section 3: Sumber Dana -->
+
+<!-- Optional: Date Picker or Extra Info -->
+<section class="space-y-4">
+<h3 class="text-gray-900 dark:text-white text-base font-bold leading-tight tracking-tight mb-3 flex items-center gap-2">Pemasukan Lainnya</h3>
+<div class="grid grid-cols-1 gap-4"><label class="flex flex-col gap-2">
+<p class="text-gray-600 dark:text-gray-400 text-sm font-semibold ml-1">Nama</p>
+<div class="relative">
+<input class="form-input flex w-full rounded-xl text-gray-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/20 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:border-primary h-14 px-4 text-base font-bold placeholder:text-gray-300" placeholder="Masukkan nama donatur" type="text"/>
+</div>
+</label>
+<label class="flex flex-col gap-2">
+<p class="text-gray-600 dark:text-gray-400 text-sm font-semibold ml-1">Jumlah Pemasukan</p>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="text-gray-400 font-bold text-sm">Rp</span>
+</div>
+<input class="form-input flex w-full rounded-xl text-gray-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/20 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:border-primary h-14 pl-10 pr-4 text-base font-bold placeholder:text-gray-300" inputmode="numeric" placeholder="0" type="number"/>
+</div>
+</label>
+</div>
+<div class="space-y-3">
+<p class="text-gray-600 dark:text-gray-400 text-sm font-semibold ml-1">Sumber Dana</p>
+<div class="grid grid-cols-2 gap-3">
+<!-- Option 1: Kotak Amal -->
+<div class="flex items-center p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 cursor-pointer hover:border-primary/50 transition-all">
+<div class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-500 mr-3">
+<span class="material-symbols-outlined text-lg">inbox</span>
+</div>
+<span class="text-sm font-semibold text-gray-700 dark:text-gray-300">Kotak Amal</span>
+</div>
+<!-- Option 2: Amplop -->
+<div class="flex items-center p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 cursor-pointer hover:border-primary/50 transition-all">
+<div class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-500 mr-3">
+<span class="material-symbols-outlined text-lg">mail</span>
+</div>
+<span class="text-sm font-semibold text-gray-700 dark:text-gray-300">Amplop</span>
+</div>
+<!-- Option 3: Transfer -->
+<div class="flex items-center p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 cursor-pointer hover:border-primary/50 transition-all">
+<div class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-500 mr-3">
+<span class="material-symbols-outlined text-lg">account_balance</span>
+</div>
+<span class="text-sm font-semibold text-gray-700 dark:text-gray-300">Transfer</span>
+</div>
+<!-- Option 4: Lainnya -->
+<div class="flex items-center p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 cursor-pointer hover:border-primary/50 transition-all">
+<div class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-500 mr-3">
+<span class="material-symbols-outlined text-lg">more_horiz</span>
+</div>
+<span class="text-sm font-semibold text-gray-700 dark:text-gray-300">Lainnya</span>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+<!-- Sticky Footer with Action Button -->
+<div class="absolute bottom-0 left-0 w-full p-4 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border-t border-gray-100 dark:border-gray-800">
+<button class="w-full h-14 bg-gradient-to-r from-[#13ec80] to-[#0bc468] hover:from-[#0bc468] hover:to-[#13ec80] text-gray-900 font-extrabold text-base rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-primary/30 active:scale-[0.98] transition-all transform">
+<span class="material-symbols-outlined">save</span>
+                Simpan Pemasukan
+            </button>
+</div>
+</div>
+</body></html>

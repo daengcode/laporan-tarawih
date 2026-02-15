@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+
+<html class="light" lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Simasjid Keuangan - Login</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts: Manrope -->
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec80",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#102219",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Manrope', sans-serif;
+        }
+        .islamic-pattern {
+            background-color: transparent;
+            background-image: radial-gradient(#13ec80 0.5px, transparent 0.5px), radial-gradient(#13ec80 0.5px, #f6f8f7 0.5px);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+            opacity: 0.08;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-[#111814] min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden">
+<!-- Background Decoration -->
+<div class="absolute inset-0 islamic-pattern pointer-events-none"></div>
+<div class="absolute -top-24 -right-24 w-64 h-64 bg-primary/10 rounded-full blur-3xl"></div>
+<div class="absolute -bottom-24 -left-24 w-64 h-64 bg-primary/10 rounded-full blur-3xl"></div>
+<main class="w-full max-w-[420px] bg-white dark:bg-[#1a2e24] p-8 rounded-xl shadow-xl shadow-primary/5 z-10 border border-primary/10">
+<!-- Logo & Header -->
+<div class="flex flex-col items-center mb-8">
+<div class="bg-primary/20 p-4 rounded-full mb-4">
+<span class="material-symbols-outlined text-primary text-4xl" style="font-variation-settings: 'FILL' 1">
+                    mosque
+                </span>
+</div>
+<h1 class="text-2xl font-extrabold tracking-tight text-[#111814] dark:text-white">Simasjid Keuangan</h1>
+<p class="text-sm text-[#4a5d53] dark:text-gray-400 mt-2 text-center font-medium">
+                Kelola Keuangan Masjid dengan Amanah
+            </p>
+</div>
+<!-- Login Form -->
+<form class="space-y-5" onsubmit="return false;">
+<!-- Username/Email Field -->
+<div class="flex flex-col gap-2">
+<label class="text-sm font-semibold text-[#111814] dark:text-gray-200 ml-1" for="username">
+                    Username atau Email
+                </label>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#618975] group-focus-within:text-primary transition-colors">
+                        person
+                    </span>
+<input class="w-full pl-10 pr-4 py-3.5 rounded-lg border border-[#dbe6e0] dark:border-[#2d4a3b] bg-white dark:bg-[#102219] text-[#111814] dark:text-white focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all placeholder:text-[#618975]/60" id="username" placeholder="admin.masjid@email.com" type="text"/>
+</div>
+</div>
+<!-- Password Field -->
+<div class="flex flex-col gap-2">
+<label class="text-sm font-semibold text-[#111814] dark:text-gray-200 ml-1" for="password">
+                    Kata Sandi
+                </label>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#618975] group-focus-within:text-primary transition-colors">
+                        lock
+                    </span>
+<input class="w-full pl-10 pr-12 py-3.5 rounded-lg border border-[#dbe6e0] dark:border-[#2d4a3b] bg-white dark:bg-[#102219] text-[#111814] dark:text-white focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all placeholder:text-[#618975]/60" id="password" placeholder="••••••••" type="password"/>
+<button class="absolute right-3 top-1/2 -translate-y-1/2 text-[#618975] hover:text-primary transition-colors" type="button">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+</div>
+</div>
+<!-- Utilities -->
+<div class="flex items-center justify-between text-sm py-1">
+<label class="flex items-center gap-2 cursor-pointer group">
+<input class="w-4 h-4 rounded border-[#dbe6e0] text-primary focus:ring-primary" type="checkbox"/>
+<span class="text-[#4a5d53] dark:text-gray-400 group-hover:text-[#111814] dark:group-hover:text-white transition-colors">Ingat saya</span>
+</label>
+<a class="text-primary font-bold hover:underline" href="#">Lupa Password?</a>
+</div>
+<!-- Submit Button -->
+<button class="w-full bg-primary hover:bg-primary/90 text-[#0a2014] font-bold py-4 rounded-lg shadow-lg shadow-primary/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2 mt-4" type="submit">
+<span>Masuk</span>
+<span class="material-symbols-outlined">login</span>
+</button>
+</form>
+<!-- Footer / Registration -->
+<div class="mt-10 pt-6 border-t border-[#dbe6e0] dark:border-[#2d4a3b] text-center">
+<p class="text-[#4a5d53] dark:text-gray-400 text-sm">
+                Belum memiliki akses sistem?
+            </p>
+<a class="mt-2 inline-block text-[#111814] dark:text-white font-extrabold hover:text-primary transition-colors underline decoration-primary underline-offset-4" href="#">
+                Hubungi Administrator Pusat
+            </a>
+</div>
+</main>
+<!-- Bottom Decorative Image -->
+<div class="mt-8 flex justify-center opacity-40">
+<div class="flex gap-4">
+<div class="w-2 h-2 bg-primary rounded-full"></div>
+<div class="w-2 h-2 bg-primary rounded-full"></div>
+<div class="w-2 h-2 bg-primary rounded-full"></div>
+</div>
+</div>
+<!-- Security Badge -->
+<div class="fixed bottom-6 flex items-center gap-2 px-4 py-2 bg-white/50 dark:bg-black/20 backdrop-blur-md rounded-full border border-primary/5">
+<span class="material-symbols-outlined text-primary text-xs">verified_user</span>
+<span class="text-[10px] uppercase tracking-widest font-bold text-[#618975]">Data Terenkripsi &amp; Aman</span>
+</div>
+</body></html>

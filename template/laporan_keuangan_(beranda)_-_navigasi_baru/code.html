@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+
+<html lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Laporan Keuangan Tarawih</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec80",
+                        "gold": "#d4af37",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#102219",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>body {
+    font-family: "Manrope", sans-serif
+    }
+.islamic-pattern {
+    background-color: #13ec80;
+    background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuAN9bk-XmsajlmQcazAXs3niSUGIG3mKQyLSKrjCv1-XGzeJe_gT2e8800DjsQTz3HpO7mui5cFUQWn5USP3_v7xl7U29M-ZGMBDHv2v0xldmC1KTe6VPKoXh-LMdiVFpVBqempHWwDjy8-XVvhORGZLpUeQUL9I8JL5P_cJQ-d_-bNcUIs8gjQP1zMSQHkMCaoiWsrOX-_eQgKEkL3AMs9SU2K7g5__i8HUw-OMsbjkH_g0ObMX13r4GeFD973jXpqnJ-Y532MlBQ)
+    }</style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark min-h-screen pb-24">
+<!-- Header Section -->
+<header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-primary/10 px-4 py-4">
+<div class="flex items-center justify-between max-w-md mx-auto">
+<div class="flex items-center gap-3">
+<div class="bg-primary/10 p-2 rounded-lg text-primary">
+<span class="material-symbols-outlined">mosque</span>
+</div>
+<h1 class="text-[#111814] text-lg font-bold leading-tight tracking-tight">Laporan Keuangan Tarawih</h1>
+</div>
+<button class="p-2 text-[#111814] hover:bg-background-light rounded-full transition-colors">
+<span class="material-symbols-outlined">calendar_month</span>
+</button>
+</div>
+<!-- Date Scroller -->
+<div class="flex gap-3 mt-4 overflow-x-auto no-scrollbar pb-1 max-w-md mx-auto">
+<div class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-xl bg-primary px-5 text-white shadow-lg shadow-primary/20">
+<p class="text-sm font-bold">12-03-2024</p>
+</div>
+<div class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-xl bg-white border border-primary/10 px-5 text-[#111814]">
+<p class="text-sm font-medium">13-03-2024</p>
+</div>
+<div class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-xl bg-white border border-primary/10 px-5 text-[#111814]">
+<p class="text-sm font-medium">14-03-2024</p>
+</div>
+<div class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-xl bg-white border border-primary/10 px-5 text-[#111814]">
+<p class="text-sm font-medium">15-03-2024</p>
+</div>
+<div class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-xl bg-white border border-primary/10 px-5 text-[#111814]">
+<p class="text-sm font-medium">16-03-2024</p>
+</div>
+</div>
+</header>
+<main class="max-w-md mx-auto p-4 space-y-6">
+<!-- Summary Card -->
+<div class="islamic-pattern rounded-2xl p-6 text-white shadow-xl shadow-primary/30 relative overflow-hidden">
+<div class="relative z-10">
+<p class="text-white/80 text-sm font-medium mb-1">Total Saldo Kas Tarawih</p>
+<h2 class="text-3xl font-extrabold tracking-tight mb-6">Rp 12.500.000</h2>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-white/10 backdrop-blur-md rounded-xl p-3 border border-white/20">
+<div class="flex items-center gap-2 mb-1">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+<p class="text-xs font-medium uppercase tracking-wider text-white/90">Pemasukan</p>
+</div>
+<p class="text-lg font-bold">Rp 2.000.000</p>
+</div>
+<div class="bg-white/10 backdrop-blur-md rounded-xl p-3 border border-white/20">
+<div class="flex items-center gap-2 mb-1 text-gold">
+<span class="material-symbols-outlined text-sm">trending_down</span>
+<p class="text-xs font-medium uppercase tracking-wider text-white/90">Pengeluaran</p>
+</div>
+<p class="text-lg font-bold">Rp 500.000</p>
+</div>
+</div>
+</div>
+<!-- Decorative circle -->
+<div class="absolute -bottom-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+</div>
+<!-- Recent Transactions -->
+<section class="space-y-4">
+<div class="flex items-center justify-between">
+<h3 class="text-[#111814] text-base font-bold">Transaksi Terbaru</h3>
+<button class="text-primary text-sm font-bold">Lihat Semua</button>
+</div>
+<div class="space-y-3">
+<!-- Transaction Item 1 -->
+<div class="flex items-center justify-between p-4 bg-white rounded-2xl border border-primary/5 shadow-sm">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 flex items-center justify-center rounded-full bg-primary/10 text-primary">
+<span class="material-symbols-outlined">payments</span>
+</div>
+<div>
+<p class="text-[#111814] font-bold text-sm">Infaq Malam 15</p>
+<p class="text-gray-400 text-xs">20:30 • Kotak Amal Utama</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-primary font-bold text-sm">+Rp 1.500.000</p>
+</div>
+</div>
+<!-- Transaction Item 2 -->
+<div class="flex items-center justify-between p-4 bg-white rounded-2xl border border-primary/5 shadow-sm">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 flex items-center justify-center rounded-full bg-gold/10 text-gold">
+<span class="material-symbols-outlined">person</span>
+</div>
+<div>
+<p class="text-[#111814] font-bold text-sm">Honor Imam</p>
+<p class="text-gray-400 text-xs">21:15 • Operasional</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-red-500 font-bold text-sm">-Rp 300.000</p>
+</div>
+</div>
+<!-- Transaction Item 3 -->
+<div class="flex items-center justify-between p-4 bg-white rounded-2xl border border-primary/5 shadow-sm">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 flex items-center justify-center rounded-full bg-gold/10 text-gold">
+<span class="material-symbols-outlined">restaurant</span>
+</div>
+<div>
+<p class="text-[#111814] font-bold text-sm">Konsumsi Takjil</p>
+<p class="text-gray-400 text-xs">18:00 • Snack jamaah</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-red-500 font-bold text-sm">-Rp 200.000</p>
+</div>
+</div>
+<!-- Transaction Item 4 -->
+<div class="flex items-center justify-between p-4 bg-white rounded-2xl border border-primary/5 shadow-sm opacity-80">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 flex items-center justify-center rounded-full bg-primary/10 text-primary">
+<span class="material-symbols-outlined">volunteer_activism</span>
+</div>
+<div>
+<p class="text-[#111814] font-bold text-sm">Zakat Maal Hamba Allah</p>
+<p class="text-gray-400 text-xs">17:45 • Titipan Zakat</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-primary font-bold text-sm">+Rp 500.000</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Insights Banner -->
+<div class="bg-primary/5 rounded-2xl p-4 border border-primary/20 flex gap-4 items-center">
+<div class="w-10 h-10 shrink-0 bg-primary/20 rounded-full flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">info</span>
+</div>
+<p class="text-xs text-[#111814]/70 leading-relaxed">
+                Pemasukan malam ini meningkat <span class="text-primary font-bold">15%</span> dibandingkan malam kemarin. Alhamdulillah barakallah.
+            </p>
+</div>
+</main>
+<!-- Floating Action Button -->
+<div class="fixed bottom-24 right-6 z-50">
+<button class="bg-primary hover:bg-primary/90 text-white flex items-center gap-2 px-6 py-4 rounded-full shadow-2xl shadow-primary/40 transition-transform active:scale-95">
+<span class="material-symbols-outlined">add_circle</span>
+<span class="font-bold">Tambah Catatan</span>
+</button>
+</div>
+<!-- Bottom Navigation -->
+<nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-primary/10 px-6 py-3 flex items-center justify-between z-50">
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="text-[10px] font-bold uppercase tracking-widest">Beranda</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-gray-400" href="#">
+<span class="material-symbols-outlined">add_circle</span>
+<span class="text-[10px] font-bold uppercase tracking-widest">Pemasukan</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-gray-400" href="#">
+<span class="material-symbols-outlined">do_not_disturb_on</span>
+<span class="text-[10px] font-bold uppercase tracking-widest">Pengeluaran</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-gray-400" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="text-[10px] font-bold uppercase tracking-widest">Laporan</span>
+</a>
+</nav>
+</body></html>
