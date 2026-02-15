@@ -32,7 +32,7 @@ Copy dan paste seluruh isi file [`supabase/rls-production.sql`](../supabase/rls-
 -- untuk custom auth implementation
 --
 -- Fitur:
--- - User hanya bisa melihat data sendiri
+-- - Semua user yang login bisa melihat semua transaksi
 -- - Admin bisa melihat semua data
 -- - User hanya bisa mengubah data sendiri
 -- - User hanya bisa menghapus data sendiri
@@ -121,7 +121,7 @@ Coba query data transaksi:
 const { data } = await supabase.from("transactions").select("*");
 
 console.log(data);
-// Hanya akan menampilkan transaksi milik user1
+// Akan menampilkan SEMUA transaksi (semua user yang login bisa melihat semua data)
 ```
 
 #### 3.1.4 Test Insert Data
@@ -323,31 +323,34 @@ console.log(data); // Hanya data admin sendiri
    WHERE policyname LIKE '%Admin%';
    ```
 
-### Masalah 4: User Biasa Bisa Melihat Data User Lain
+### Masalah 4: User Biasa Tidak Bisa Melihat Data Apapun
 
 **Gejala:**
 
 ```javascript
 // Login sebagai user1
 const { data } = await supabase.from("transactions").select("*");
-console.log(data); // Termasuk data user lain
+console.log(data); // [] (kosong)
 ```
 
 **Solusi:**
 
-1. Pastikan RLS enabled:
+1. Pastikan user ID di-set sebelum query:
+   ```javascript
+   await supabase.rpc("set_current_user_id", { user_id: userId });
+   ```
+2. Pastikan RLS enabled:
    ```sql
    SELECT relname, relrowsecurity
    FROM pg_class
    WHERE relname IN ('users', 'transactions');
    ```
-2. Pastikan policies tidak menggunakan `USING (true)`:
+3. Pastikan policy "Users can view all transactions" aktif:
    ```sql
    SELECT * FROM pg_policies
-   WHERE tablename = 'transactions'
-   AND qual = 'true';
+   WHERE policyname = 'Users can view all transactions';
    ```
-3. Jalankan ulang script RLS production
+4. Jalankan ulang script RLS production
 
 ## 📝 Checklist Production
 
@@ -362,7 +365,7 @@ Sebelum deploy ke production, pastikan:
 - [ ] Frontend sudah terupdate dengan RLS logic
 - [ ] Login admin berhasil
 - [ ] Login user biasa berhasil
-- [ ] User biasa hanya bisa melihat data sendiri
+- [ ] Semua user yang login bisa melihat semua transaksi
 - [ ] Admin bisa melihat semua data
 - [ ] User biasa tidak bisa insert dengan user ID lain
 - [ ] User biasa tidak bisa update data user lain
@@ -428,7 +431,7 @@ Cek query logs di Supabase dashboard untuk:
 
 RLS untuk production sudah berhasil di-setup! Aplikasi Anda sekarang aman dengan:
 
-- ✅ User hanya bisa melihat data sendiri
+- ✅ Semua user yang login bisa melihat semua transaksi
 - ✅ Admin bisa melihat semua data
 - ✅ User hanya bisa mengubah data sendiri
 - ✅ User hanya bisa menghapus data sendiri

@@ -5,7 +5,7 @@
 -- untuk custom auth implementation
 --
 -- Fitur:
--- - User hanya bisa melihat data sendiri
+-- - Semua user yang login bisa melihat semua transaksi
 -- - Admin bisa melihat semua data
 -- - User hanya bisa mengubah data sendiri
 -- - User hanya bisa menghapus data sendiri
@@ -122,11 +122,11 @@ CREATE POLICY "Admin can update all transactions"
     FOR UPDATE
     USING (is_admin());
 
--- Policy: User bisa melihat transaksi yang dibuatnya sendiri
-CREATE POLICY "Users can view own transactions"
+-- Policy: Semua user yang login bisa melihat semua transaksi
+CREATE POLICY "Users can view all transactions"
     ON transactions
     FOR SELECT
-    USING (created_by = get_current_user_id());
+    USING (get_current_user_id() IS NOT NULL);
 
 -- Policy: User bisa insert transaksi dengan ID sendiri
 CREATE POLICY "Users can insert own transactions"
@@ -196,7 +196,7 @@ ORDER BY policyname;
 --
 -- 2. Coba query transactions:
 --    SELECT * FROM transactions;
---    -- Hanya akan menampilkan transactions milik user tersebut
+--    -- Akan menampilkan SEMUA transactions (semua user yang login bisa melihat semua data)
 --
 -- 3. Login sebagai admin:
 --    SELECT set_current_user_id(1);

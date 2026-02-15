@@ -20,9 +20,6 @@ export function usePemasukan() {
     error.value = null;
 
     try {
-      // Set current user ID untuk RLS
-      await setCurrentUserId();
-
       let query = supabase
         .from("transactions")
         .select("*")
@@ -61,9 +58,6 @@ export function usePemasukan() {
     error.value = null;
 
     try {
-      // Set current user ID untuk RLS
-      await setCurrentUserId();
-
       const { data, error: fetchError } = await supabase
         .from("transactions")
         .select("*")
@@ -204,9 +198,6 @@ export function usePemasukan() {
     error.value = null;
 
     try {
-      // Set current user ID untuk RLS
-      await setCurrentUserId();
-
       let query = supabase
         .from("transactions")
         .select("amount")

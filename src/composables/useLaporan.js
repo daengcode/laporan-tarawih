@@ -1,12 +1,10 @@
 import { ref } from "vue";
 import { supabase } from "@/supabase/client";
-import { useAuth } from "./useAuth";
 
 /**
  * Composable untuk Query Laporan Keuangan
  */
 export function useLaporan() {
-  const { setCurrentUserId } = useAuth();
   const loading = ref(false);
   const error = ref(null);
 
@@ -20,9 +18,6 @@ export function useLaporan() {
     error.value = null;
 
     try {
-      // Set current user ID untuk RLS
-      await setCurrentUserId();
-
       let query = supabase
         .from("transactions")
         .select("*")
@@ -123,9 +118,6 @@ export function useLaporan() {
     error.value = null;
 
     try {
-      // Set current user ID untuk RLS
-      await setCurrentUserId();
-
       let query = supabase.from("transactions").select("type, amount").is("deleted_at", null);
 
       // Filter berdasarkan tanggal
@@ -176,9 +168,6 @@ export function useLaporan() {
     error.value = null;
 
     try {
-      // Set current user ID untuk RLS
-      await setCurrentUserId();
-
       const startDate = `${year}-01-01`;
       const endDate = `${year}-12-31`;
 
@@ -231,9 +220,6 @@ export function useLaporan() {
     error.value = null;
 
     try {
-      // Set current user ID untuk RLS
-      await setCurrentUserId();
-
       const { data, error: fetchError } = await supabase
         .from("transactions")
         .select("*")
@@ -287,9 +273,6 @@ export function useLaporan() {
     error.value = null;
 
     try {
-      // Set current user ID untuk RLS
-      await setCurrentUserId();
-
       let query = supabase
         .from("transactions")
         .select("*")
@@ -342,9 +325,6 @@ export function useLaporan() {
     error.value = null;
 
     try {
-      // Set current user ID untuk RLS
-      await setCurrentUserId();
-
       let query = supabase
         .from("transactions")
         .select("*")

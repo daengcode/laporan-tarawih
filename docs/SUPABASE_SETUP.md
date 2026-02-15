@@ -270,7 +270,7 @@ Row Level Security (RLS) sudah di-setup di [`supabase/schema.sql`](../supabase/s
 
 **Tabel `transactions`:**
 
-- User hanya bisa melihat transaksi yang dibuatnya sendiri
+- Semua user yang login bisa melihat semua transaksi
 - User hanya bisa insert/update/delete transaksi yang dibuatnya sendiri
 
 ### Catatan Penting:
