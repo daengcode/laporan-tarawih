@@ -75,26 +75,6 @@
         ></div>
       </div>
 
-      <!-- Insights Banner -->
-      <div class="bg-primary/5 rounded-2xl p-4 border border-primary/20 flex gap-4 items-center">
-        <div
-          class="w-10 h-10 shrink-0 bg-primary/20 rounded-full flex items-center justify-center text-primary"
-        >
-          <span class="material-symbols-outlined">info</span>
-        </div>
-        <p class="text-xs text-[#111814]/70 leading-relaxed">
-          Pemasukan malam ini
-          <span v-if="incomePercentageChange > 0" class="text-primary font-bold"
-            >meningkat {{ incomePercentageChange }}%</span
-          >
-          <span v-else-if="incomePercentageChange < 0" class="text-red-500 font-bold"
-            >menurun {{ Math.abs(incomePercentageChange) }}%</span
-          >
-          <span v-else class="text-gray-500 font-bold">tetap sama</span>
-          dibandingkan malam kemarin. Barakallah.
-        </p>
-      </div>
-
       <!-- Recent Transactions -->
       <section class="space-y-4">
         <div class="flex items-center justify-between">
@@ -146,6 +126,26 @@
           </div>
         </div>
       </section>
+
+      <!-- Insights Banner -->
+      <div class="bg-primary/5 rounded-2xl p-4 border border-primary/20 flex gap-4 items-center">
+        <div
+          class="w-10 h-10 shrink-0 bg-primary/20 rounded-full flex items-center justify-center text-primary"
+        >
+          <span class="material-symbols-outlined">info</span>
+        </div>
+        <p class="text-xs text-[#111814]/70 leading-relaxed">
+          Pemasukan malam ini
+          <span v-if="incomePercentageChange > 0" class="text-primary font-bold"
+            >meningkat {{ incomePercentageChange }}%</span
+          >
+          <span v-else-if="incomePercentageChange < 0" class="text-red-500 font-bold"
+            >menurun {{ Math.abs(incomePercentageChange) }}%</span
+          >
+          <span v-else class="text-gray-500 font-bold">tetap sama</span>
+          dibandingkan malam kemarin. Barakallah.
+        </p>
+      </div>
     </main>
 
     <!-- Bottom Menu Component -->
