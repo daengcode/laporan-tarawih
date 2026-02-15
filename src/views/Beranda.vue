@@ -273,8 +273,8 @@
               <span class="material-symbols-outlined">link</span>
             </div>
             <div class="text-left">
-              <span class="font-bold text-primary block">Salin Link</span>
-              <span class="text-xs text-gray-500">Copy link laporan</span>
+              <span class="font-bold text-primary block">Copy Link</span>
+              <span class="text-xs text-gray-500">Salin link laporan</span>
             </div>
           </button>
           <button
