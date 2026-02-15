@@ -17,13 +17,7 @@
           </div>
         </div>
         <div class="flex items-center gap-2">
-          <button
-            @click="handleLogout"
-            class="p-2 text-[#111814] hover:bg-background-light rounded-full transition-colors"
-            title="Logout"
-          >
-            <span class="material-symbols-outlined">logout</span>
-          </button>
+          <Logout />
         </div>
       </div>
       <!-- Date Scroller -->
@@ -52,7 +46,7 @@
         class="islamic-pattern rounded-2xl p-6 text-white shadow-xl shadow-primary/30 relative overflow-hidden"
       >
         <div class="relative z-10">
-          <p class="text-white/80 text-sm font-medium mb-1">Total Pemasukan</p>
+          <p class="text-white/80 text-sm font-medium mb-1">SALDO PEMASUKAN</p>
           <h2 class="text-3xl font-extrabold tracking-tight mb-6">
             {{ formatCurrency(currentBalance) }}
           </h2>
@@ -104,7 +98,7 @@
       <!-- Recent Transactions -->
       <section class="space-y-4">
         <div class="flex items-center justify-between">
-          <!-- <h3 class="text-[#111814] text-base font-bold">Daftar Pemasukan dan Pengeluaran</h3> -->
+          <h3 class="text-[#111814] text-base font-bold">Transaksi Terbaru</h3>
           <!-- <button @click="goToLaporan" class="text-primary text-sm font-bold">Lihat Semua</button> -->
         </div>
         <div class="space-y-3">
@@ -198,6 +192,7 @@ import { useRouter } from "vue-router";
 import { useAuth } from "@/composables/useAuth";
 import { useLaporan } from "@/composables/useLaporan";
 import BottomMenu from "@/components/BottomMenu.vue";
+import Logout from "@/components/Logout.vue";
 
 const router = useRouter();
 const { user, logout } = useAuth();
@@ -391,11 +386,6 @@ const goToInputPengeluaran = () => {
 
 const goToLaporan = () => {
   router.push("/laporan");
-};
-
-const handleLogout = () => {
-  logout();
-  router.push("/login");
 };
 
 // Lifecycle

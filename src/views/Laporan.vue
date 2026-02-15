@@ -16,13 +16,7 @@
         <h1 class="text-[#111814] text-lg font-bold leading-tight tracking-tight">
           Laporan Amaliyah Ramadhan 1447 H
         </h1>
-        <button
-          @click="handleLogout"
-          class="flex size-10 items-center justify-center rounded-full hover:bg-background-light transition-colors text-primary"
-          title="Logout"
-        >
-          <span class="material-symbols-outlined">logout</span>
-        </button>
+        <Logout />
       </div>
       <!-- Date Scroller -->
       <div class="flex gap-3 mt-4 overflow-x-scroll overflow-y-hidden pb-1 max-w-md mx-auto">
@@ -254,7 +248,47 @@
     </main>
 
     <!-- Bottom Menu Component -->
-    <BottomMenu current-page="laporan" />
+    <BottomMenu current-page="laporan" @open-modal="showAddModal = true" />
+
+    <!-- Add Modal -->
+    <div
+      v-if="showAddModal"
+      class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+    >
+      <div class="bg-white rounded-2xl p-6 w-full max-w-sm">
+        <h3 class="text-lg font-bold text-center mb-6">Pilih Jenis Transaksi</h3>
+        <div class="space-y-3">
+          <button
+            @click="goToInputPemasukan"
+            class="w-full flex items-center gap-4 p-4 rounded-xl bg-primary/10 border border-primary/20 hover:bg-primary/20 transition-colors"
+          >
+            <div
+              class="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center"
+            >
+              <span class="material-symbols-outlined">trending_up</span>
+            </div>
+            <span class="font-bold text-primary">Pemasukan</span>
+          </button>
+          <button
+            @click="goToInputPengeluaran"
+            class="w-full flex items-center gap-4 p-4 rounded-xl bg-red-50 border border-red-200 hover:bg-red-100 transition-colors"
+          >
+            <div
+              class="w-12 h-12 rounded-full bg-red-500 text-white flex items-center justify-center"
+            >
+              <span class="material-symbols-outlined">trending_down</span>
+            </div>
+            <span class="font-bold text-red-500">Pengeluaran</span>
+          </button>
+        </div>
+        <button
+          @click="showAddModal = false"
+          class="w-full mt-6 py-3 text-gray-500 font-medium hover:text-gray-700 transition-colors"
+        >
+          Batal
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -264,6 +298,7 @@ import { useRouter } from "vue-router";
 import { useAuth } from "@/composables/useAuth";
 import { useLaporan } from "@/composables/useLaporan";
 import BottomMenu from "@/components/BottomMenu.vue";
+import Logout from "@/components/Logout.vue";
 
 const router = useRouter();
 const { logout } = useAuth();
@@ -275,6 +310,7 @@ const transactions = ref([]);
 const dates = ref([]);
 const selectedDate = ref(null);
 const saldoSebelumnya = ref(0);
+const showAddModal = ref(false);
 
 // Helper function untuk format tanggal Indonesia
 const formatDateIndo = (dateString) => {
@@ -428,9 +464,14 @@ const selectDate = (date) => {
   updateFinancialData(date.date);
 };
 
-const handleLogout = () => {
-  logout();
-  router.push("/login");
+const goToInputPemasukan = () => {
+  showAddModal.value = false;
+  router.push("/input-pemasukan");
+};
+
+const goToInputPengeluaran = () => {
+  showAddModal.value = false;
+  router.push("/input-pengeluaran");
 };
 
 const formatCurrency = (value) => {
