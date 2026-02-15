@@ -142,9 +142,7 @@
                 <div
                   class="w-12 h-12 flex items-center justify-center rounded-full bg-primary/10 text-primary"
                 >
-                  <span class="material-symbols-outlined">{{
-                    getTransactionIcon(transaction)
-                  }}</span>
+                  <span class="material-symbols-outlined">trending_up</span>
                 </div>
                 <div>
                   <p class="text-[#111814] font-bold text-sm">{{ transaction.name }}</p>
@@ -173,11 +171,9 @@
             >
               <div class="flex items-center gap-4">
                 <div
-                  class="w-12 h-12 flex items-center justify-center rounded-full bg-red-500/10 text-red-500"
+                  class="w-12 h-12 flex items-center justify-center rounded-full bg-gold/10 text-gold"
                 >
-                  <span class="material-symbols-outlined">{{
-                    getTransactionIcon(transaction)
-                  }}</span>
+                  <span class="material-symbols-outlined">trending_down</span>
                 </div>
                 <div>
                   <p class="text-[#111814] font-bold text-sm">{{ transaction.name }}</p>
@@ -463,13 +459,16 @@ const shareToWhatsapp = () => {
   showShareModal.value = false;
 };
 
-// Fetch data
-const fetchTransactions = async () => {
+// Fetch data dengan retry mechanism
+const fetchTransactions = async (retryCount = 0) => {
   loading.value = true;
   try {
     // Ambil transaksi pada tanggal yang dipilih
     const result = await getTransaksiByDate(dateParam.value);
-    if (result.success && result.data.length > 0) {
+    console.log("Date param:", dateParam.value);
+    console.log("Result:", result);
+
+    if (result.success && result.data && result.data.length > 0) {
       transactions.value = result.data;
       dateExists.value = true;
 
@@ -479,11 +478,25 @@ const fetchTransactions = async () => {
         previousTransactions.value = previousResult.data;
       }
     } else {
-      dateExists.value = false;
+      // Jika gagal dan masih ada retry, coba lagi
+      if (retryCount < 2) {
+        console.log(`Retry ${retryCount + 1}...`);
+        await new Promise((resolve) => setTimeout(resolve, 500)); // Tunggu 500ms
+        return fetchTransactions(retryCount + 1);
+      } else {
+        dateExists.value = false;
+      }
     }
   } catch (error) {
     console.error("Gagal mengambil transaksi:", error);
-    dateExists.value = false;
+    // Jika error dan masih ada retry, coba lagi
+    if (retryCount < 2) {
+      console.log(`Retry ${retryCount + 1} after error...`);
+      await new Promise((resolve) => setTimeout(resolve, 500)); // Tunggu 500ms
+      return fetchTransactions(retryCount + 1);
+    } else {
+      dateExists.value = false;
+    }
   } finally {
     loading.value = false;
   }
