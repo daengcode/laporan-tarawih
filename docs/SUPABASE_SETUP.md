@@ -225,7 +225,7 @@ const {
   getTransaksiPerBulan,
   getTransaksiPerHari,
   getTransaksiBySource,
-  getTransaksiByexpense_type,
+  getTransaksiByExpenseType,
   exportTransaksi,
 } = useLaporan();
 
@@ -246,7 +246,7 @@ const { success, data } = await getTransaksiPerHari("2024-01-01", "2024-01-31");
 const { success, data } = await getTransaksiBySource({ startDate, endDate });
 
 // Transaksi berdasarkan tipe pengeluaran
-const { success, data } = await getTransaksiByexpense_type({
+const { success, data } = await getTransaksiByExpenseType({
   startDate,
   endDate,
 });

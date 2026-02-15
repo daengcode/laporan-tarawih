@@ -56,6 +56,64 @@ export function useLaporan() {
   };
 
   /**
+   * Ambil transaksi berdasarkan tanggal (untuk public access)
+   * @param {string} date - Tanggal transaksi (YYYY-MM-DD)
+   * @returns {Promise<{success: boolean, data?: array, error?: string}>}
+   */
+  const getTransaksiByDate = async (date) => {
+    loading.value = true;
+    error.value = null;
+
+    try {
+      // Tidak perlu set current user ID untuk public access
+      const { data, error: fetchError } = await supabase
+        .from("transactions")
+        .select("*")
+        .eq("date", date)
+        .is("deleted_at", null) // Hanya yang belum dihapus
+        .order("created_at", { ascending: false });
+
+      if (fetchError) throw fetchError;
+
+      return { success: true, data };
+    } catch (err) {
+      error.value = err.message;
+      return { success: false, error: err.message };
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  /**
+   * Ambil transaksi sebelum tanggal tertentu (untuk menghitung saldo sebelumnya)
+   * @param {string} date - Tanggal batas (YYYY-MM-DD)
+   * @returns {Promise<{success: boolean, data?: array, error?: string}>}
+   */
+  const getTransaksiBeforeDate = async (date) => {
+    loading.value = true;
+    error.value = null;
+
+    try {
+      // Tidak perlu set current user ID untuk public access
+      const { data, error: fetchError } = await supabase
+        .from("transactions")
+        .select("*")
+        .lt("date", date)
+        .is("deleted_at", null) // Hanya yang belum dihapus
+        .order("date", { ascending: false });
+
+      if (fetchError) throw fetchError;
+
+      return { success: true, data };
+    } catch (err) {
+      error.value = err.message;
+      return { success: false, error: err.message };
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  /**
    * Ambil ringkasan keuangan (total pemasukan, pengeluaran, saldo)
    * @param {object} filters - Filter opsional (startDate, endDate)
    * @returns {Promise<{success: boolean, data?: object, error?: string}>}
@@ -279,7 +337,7 @@ export function useLaporan() {
    * @param {object} filters - Filter opsional (startDate, endDate)
    * @returns {Promise<{success: boolean, data?: array, error?: string}>}
    */
-  const getTransaksiByexpense_type = async (filters = {}) => {
+  const getTransaksiByExpenseType = async (filters = {}) => {
     loading.value = true;
     error.value = null;
 
@@ -408,11 +466,13 @@ export function useLaporan() {
     loading,
     error,
     getTransaksi,
+    getTransaksiByDate,
+    getTransaksiBeforeDate,
     getRingkasanKeuangan,
     getTransaksiPerBulan,
     getTransaksiPerHari,
     getTransaksiBySource,
-    getTransaksiByexpense_type,
+    getTransaksiByExpenseType,
     exportTransaksi,
   };
 }

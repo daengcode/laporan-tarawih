@@ -101,9 +101,9 @@
                 >
                   <span class="material-symbols-outlined text-blue-500 text-lg">payments</span>
                 </div>
-                <span class="text-slate-600 dark:text-slate-300 font-medium">{{
-                  donatur.name
-                }}</span>
+                <span class="text-slate-600 dark:text-slate-300 font-medium">
+                  {{ item.source }} dari {{ donatur.name }}
+                </span>
               </div>
               <span class="font-bold text-slate-900 dark:text-white">{{
                 formatCurrency(donatur.amount)
