@@ -255,7 +255,7 @@
       class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
     >
       <div class="bg-white rounded-2xl p-6 w-full max-w-sm">
-        <h3 class="text-lg font-bold text-center mb-4">Share Laporan</h3>
+        <h3 class="text-lg font-bold text-center mb-4">Bagikan Laporan</h3>
         <div class="mb-4 p-4 bg-gray-50 rounded-xl">
           <p class="text-sm font-bold text-gray-900 mb-2">
             Tanggal: {{ getSelectedDateDisplay() }}
