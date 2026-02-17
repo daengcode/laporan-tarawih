@@ -331,12 +331,13 @@ const formatDateIndo = (dateString) => {
 
 // Helper function untuk format waktu
 const formatTime = (dateString) => {
-  if (!dateString) return "--:--";
-  // Data sudah disimpan dalam format Asia/Makassar (YYYY-MM-DD HH:mm:ss.sss)
-  // Cukup ambil bagian jam dan menit saja
-  const timePart = dateString.split(" ")[1] || dateString;
-  const [hours, minutes] = timePart.split(":");
-  return `${hours}:${minutes}`;
+  const date = new Date(dateString);
+  return date.toLocaleTimeString("id-ID", {
+    timeZone: "Asia/Makassar",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
 };
 
 // Helper function untuk mendapatkan icon berdasarkan tipe transaksi
