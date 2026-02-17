@@ -11,7 +11,7 @@
           </div>
           <div>
             <h1 class="text-[#111814] text-lg font-bold leading-tight tracking-tight">
-              Ramadhan 1447 H Masjid Baiturrahim
+              Masjid Baiturrahim Ramadhan 1447 H
             </h1>
             <!-- <p v-if="user" class="text-xs text-gray-500">Halo, {{ user.name }}</p> -->
           </div>
@@ -319,6 +319,7 @@ const showAddModal = ref(false);
 const selectedTransaction = ref(null);
 const showActionModal = ref(false);
 const showShareModal = ref(false);
+const isDeleting = ref(false);
 
 // Helper function untuk format tanggal Indonesia
 const formatDateIndo = (dateString) => {
@@ -359,13 +360,13 @@ const getTransactionIcon = (transaction) => {
 };
 
 // Ambil data transaksi dari database
-const fetchTransactions = async () => {
+const fetchTransactions = async (preserveSelectedDate = false) => {
   loading.value = true;
   try {
     const result = await getTransaksi();
     if (result.success) {
       transactions.value = result.data;
-      groupTransactionsByDate();
+      groupTransactionsByDate(preserveSelectedDate);
     } else {
       console.error("Gagal mengambil transaksi:", result.error);
       await Swal.fire({
@@ -391,7 +392,16 @@ const fetchTransactions = async () => {
 };
 
 // Kelompokkan transaksi berdasarkan tanggal
-const groupTransactionsByDate = () => {
+const groupTransactionsByDate = (preserveSelectedDate = false) => {
+  // Simpan tanggal yang sedang dipilih jika ingin dipertahankan
+  let preservedDate = null;
+  if (preserveSelectedDate && selectedDate.value !== null) {
+    const currentSelected = dates.value.find((d) => d.id === selectedDate.value);
+    if (currentSelected) {
+      preservedDate = currentSelected.date;
+    }
+  }
+
   // Group transaksi berdasarkan tanggal
   const grouped = {};
   transactions.value.forEach((transaction) => {
@@ -412,10 +422,27 @@ const groupTransactionsByDate = () => {
     transactions: grouped[date],
   }));
 
-  // Set tanggal yang dipilih ke tanggal terbaru
+  // Set tanggal yang dipilih
   if (dates.value.length > 0) {
-    selectedDate.value = dates.value[0].id;
-    updateRecentTransactions(dates.value[0].date);
+    if (preserveSelectedDate && preservedDate) {
+      // Coba kembalikan ke tanggal yang sebelumnya dipilih
+      const preservedIndex = dates.value.findIndex((d) => d.date === preservedDate);
+      if (preservedIndex !== -1) {
+        selectedDate.value = dates.value[preservedIndex].id;
+        updateRecentTransactions(dates.value[preservedIndex].date);
+      } else {
+        // Jika tanggal yang dipilih sudah tidak ada, pindah ke tanggal terbaru
+        selectedDate.value = dates.value[0].id;
+        updateRecentTransactions(dates.value[0].date);
+      }
+    } else {
+      // Set ke tanggal terbaru
+      selectedDate.value = dates.value[0].id;
+      updateRecentTransactions(dates.value[0].date);
+    }
+  } else {
+    selectedDate.value = null;
+    recentTransactions.value = [];
   }
 };
 
@@ -554,6 +581,11 @@ const handleTransactionClick = (transaction) => {
 const handleDeleteTransaction = async () => {
   if (!selectedTransaction.value) return;
 
+  // Cegah multiple delete operations
+  if (isDeleting.value) {
+    return;
+  }
+
   const result = await Swal.fire({
     icon: "warning",
     title: "Hapus Transaksi",
@@ -566,6 +598,18 @@ const handleDeleteTransaction = async () => {
   });
 
   if (result.isConfirmed) {
+    isDeleting.value = true;
+
+    // Tampilkan loading
+    Swal.fire({
+      title: "Menghapus...",
+      text: "Mohon tunggu sebentar",
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+
     try {
       let deleteResult;
       if (selectedTransaction.value.type === "income") {
@@ -575,14 +619,27 @@ const handleDeleteTransaction = async () => {
       }
 
       if (deleteResult.success) {
+        // Hapus transaksi dari local state secara langsung untuk update UI yang lebih cepat
+        const transactionDate = selectedTransaction.value.originalTransaction?.date;
+        const transactionId = selectedTransaction.value.id;
+
+        // Hapus dari recentTransactions
+        recentTransactions.value = recentTransactions.value.filter((t) => t.id !== transactionId);
+
+        // Hapus dari transactions array
+        transactions.value = transactions.value.filter((t) => t.id !== transactionId);
+
+        // Refresh data dari database untuk memastikan konsistensi
+        await fetchTransactions(true);
+
         await Swal.fire({
           icon: "success",
           title: "Berhasil",
           text: "Transaksi berhasil dihapus!",
           confirmButtonColor: "#059669",
+          timer: 1500,
+          showConfirmButton: false,
         });
-        // Refresh data transaksi
-        await fetchTransactions();
       } else {
         await Swal.fire({
           icon: "error",
@@ -592,12 +649,15 @@ const handleDeleteTransaction = async () => {
         });
       }
     } catch (error) {
+      console.error("Error deleting transaction:", error);
       await Swal.fire({
         icon: "error",
         title: "Gagal",
         text: error.message || "Terjadi kesalahan!",
         confirmButtonColor: "#059669",
       });
+    } finally {
+      isDeleting.value = false;
     }
   }
 

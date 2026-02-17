@@ -14,7 +14,8 @@
             </div>
             <div>
               <h1 class="text-[#111814] text-lg text-center font-bold leading-tight tracking-tight">
-                Laporan Amaliyah Ramadhan 1447 H <br> Masjid Baiturrahim
+                Laporan Amaliyah Ramadhan 1447 H <br />
+                Masjid Baiturrahim
               </h1>
             </div>
           </div>
@@ -86,8 +87,8 @@
           class="bg-white dark:bg-gray-800 rounded-2xl p-4 border border-gray-200 dark:border-gray-700 shadow-sm"
         >
           <h3 class="text-[#111814] dark:text-white text-base font-bold mb-4">
-              Saldo Kas {{ formatDateIndo(dateParam) }}
-            </h3>
+            Saldo Kas {{ formatDateIndo(dateParam) }}
+          </h3>
           <div class="space-y-3">
             <div
               class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-xl"
@@ -192,6 +193,57 @@
           </div>
         </section>
 
+        <!-- Infaq Section -->
+        <section class="space-y-4">
+          <div
+            class="bg-gradient-to-r from-emerald-50 to-green-50 dark:from-gray-800 dark:to-gray-800 rounded-2xl p-5 border border-emerald-100 dark:border-gray-700 shadow-sm"
+          >
+            <div class="flex items-center gap-4">
+              <!-- Barcode Placeholder - Kiri -->
+              <div class="flex-shrink-0">
+                <div
+                  class="w-28 h-28 bg-white dark:bg-gray-700 rounded-xl border-2 border-dashed border-emerald-300 dark:border-emerald-600 flex items-center justify-center"
+                >
+                  <div class="text-center">
+                    <span
+                      class="material-symbols-outlined text-4xl text-emerald-500 dark:text-emerald-400"
+                      >qr_code_2</span
+                    >
+                    <p class="text-xs text-gray-400 mt-1">Barcode</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Pesan Ajakan - Kanan -->
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-2">
+                  <span class="material-symbols-outlined text-emerald-600 dark:text-emerald-400"
+                    >volunteer_activism</span
+                  >
+                  <h3 class="text-[#111814] dark:text-white text-base font-bold">Mari Berinfaq</h3>
+                </div>
+                <!-- <p
+                  class="text-sm text-justify text-gray-600 dark:text-gray-300 leading-relaxed mb-3"
+                >
+                  Infaq akan digunakan untuk operasional masjid selama bulan Ramadhan.
+                </p> -->
+                <div
+                  class="flex items-center gap-2 text-xs text-emerald-600 dark:text-emerald-400 font-medium"
+                >
+                  <span class="material-symbols-outlined text-sm">info</span>
+                  <span>Scan barcode untuk transfer infaq</span>
+                </div>
+                <div
+                  class="flex items-center gap-2 text-xs text-amber-600 dark:text-amber-400 font-medium mt-2"
+                >
+                  <span class="material-symbols-outlined text-sm">notifications</span>
+                  <span>Setelah melakukan transfer, segera konfirmasi ke nomor 08123456789</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <!-- Share Button -->
         <div
           class="fixed bottom-0 left-0 w-full p-4 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border-t border-gray-100 dark:border-gray-800"
@@ -212,7 +264,7 @@
         class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
       >
         <div class="bg-white rounded-2xl p-6 w-full max-w-sm">
-          <h3 class="text-lg font-bold text-center mb-4">Bagikan Kebaikan ini</h3>
+          <h3 class="text-lg font-bold text-center mb-4">Bagikan Kebaikan</h3>
           <div class="mb-4 p-4 bg-gray-50 rounded-xl">
             <p class="text-sm font-bold text-gray-900 mb-2">
               Tanggal: {{ formatDateIndo(dateParam) }}
