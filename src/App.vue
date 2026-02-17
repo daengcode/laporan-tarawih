@@ -7,8 +7,8 @@ const router = useRouter();
 const { checkAuth, isAuthenticated } = useAuth();
 
 // Cek auth saat aplikasi dimuat
-onMounted(() => {
-  checkAuth();
+onMounted(async () => {
+  await checkAuth();
 });
 </script>
 

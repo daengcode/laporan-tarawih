@@ -13,29 +13,13 @@
         >
           <span class="material-symbols-outlined text-[#111814]">arrow_back</span>
         </button>
-        <h1 class="text-[#111814] text-lg font-bold leading-tight tracking-tight">
-          Laporan Amaliyah Ramadhan 1447 H
+        <h1 class="text-[#111814] text-lg text-center font-bold leading-tight tracking-tight">
+          Laporan Amaliyah Ramadhan 1447 H <br> Masjid Baiturrahim
         </h1>
         <Logout />
       </div>
       <!-- Date Scroller -->
-      <div class="flex gap-3 mt-4 overflow-x-scroll overflow-y-hidden pb-1 max-w-md mx-auto">
-        <div
-          v-for="date in dates"
-          :key="date.id"
-          @click="selectDate(date)"
-          :class="[
-            'flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-xl px-5 cursor-pointer transition-all',
-            selectedDate === date.id
-              ? 'bg-primary text-white shadow-lg shadow-primary/20'
-              : 'bg-white border border-primary/10 text-[#111814] hover:border-primary/30',
-          ]"
-        >
-          <p :class="selectedDate === date.id ? 'text-sm font-bold' : 'text-sm font-medium'">
-            {{ date.display }}
-          </p>
-        </div>
-      </div>
+      <DateScroller :dates="dates" :selected-date="selectedDate" @select-date="selectDate" />
     </header>
 
     <main class="max-w-md mx-auto p-4 space-y-4">
@@ -299,9 +283,10 @@ import { useAuth } from "@/composables/useAuth";
 import { useLaporan } from "@/composables/useLaporan";
 import BottomMenu from "@/components/BottomMenu.vue";
 import Logout from "@/components/Logout.vue";
+import DateScroller from "@/components/DateScroller.vue";
 
 const router = useRouter();
-const { logout } = useAuth();
+const { logout, checkAuth } = useAuth();
 const { getTransaksi } = useLaporan();
 
 // State
@@ -329,9 +314,13 @@ const fetchTransactions = async () => {
     if (result.success) {
       transactions.value = result.data;
       groupTransactionsByDate();
+    } else {
+      console.error("Gagal mengambil transaksi:", result.error);
+      alert("Gagal memuat data: " + (result.error || "Terjadi kesalahan"));
     }
   } catch (error) {
     console.error("Gagal mengambil transaksi:", error);
+    alert("Gagal memuat data: " + (error.message || "Terjadi kesalahan"));
   } finally {
     loading.value = false;
   }
@@ -483,7 +472,8 @@ const formatCurrency = (value) => {
 };
 
 // Load data saat component di-mount
-onMounted(() => {
+onMounted(async () => {
+  await checkAuth();
   fetchTransactions();
 });
 </script>

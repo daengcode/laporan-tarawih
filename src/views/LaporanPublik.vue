@@ -13,10 +13,9 @@
               <span class="material-symbols-outlined">mosque</span>
             </div>
             <div>
-              <h1 class="text-[#111814] text-lg font-bold leading-tight tracking-tight">
-                Laporan Amaliyah Ramadhan 1447 H
+              <h1 class="text-[#111814] text-lg text-center font-bold leading-tight tracking-tight">
+                Laporan Amaliyah Ramadhan 1447 H <br> Masjid Baiturrahim
               </h1>
-              <p class="text-xs text-gray-500">Tanggal {{ formatDateIndo(dateParam) }}</p>
             </div>
           </div>
         </div>
@@ -86,7 +85,9 @@
         <div
           class="bg-white dark:bg-gray-800 rounded-2xl p-4 border border-gray-200 dark:border-gray-700 shadow-sm"
         >
-          <h3 class="text-[#111814] dark:text-white text-base font-bold mb-4">Saldo Kas</h3>
+          <h3 class="text-[#111814] dark:text-white text-base font-bold mb-4">
+              Saldo Kas {{ formatDateIndo(dateParam) }}
+            </h3>
           <div class="space-y-3">
             <div
               class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-xl"
@@ -200,7 +201,7 @@
             class="w-full h-14 bg-gradient-to-r from-[#059669] to-[#047857] hover:from-[#047857] hover:to-[#059669] text-white font-extrabold text-base rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-primary/30 active:scale-[0.98] transition-all transform"
           >
             <span class="material-symbols-outlined">share</span>
-            <span>Bagikan Laporan</span>
+            <span>Bagikan Kebaikan</span>
           </button>
         </div>
       </main>
@@ -211,12 +212,12 @@
         class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
       >
         <div class="bg-white rounded-2xl p-6 w-full max-w-sm">
-          <h3 class="text-lg font-bold text-center mb-4">Bagikan Laporan</h3>
+          <h3 class="text-lg font-bold text-center mb-4">Bagikan Kebaikan ini</h3>
           <div class="mb-4 p-4 bg-gray-50 rounded-xl">
             <p class="text-sm font-bold text-gray-900 mb-2">
               Tanggal: {{ formatDateIndo(dateParam) }}
             </p>
-            <p class="text-xs text-gray-500">Pilih cara untuk membagikan laporan ini:</p>
+            <p class="text-xs text-gray-500">Pilih cara untuk membagikan kebaikan ini:</p>
           </div>
           <div class="space-y-3">
             <button
@@ -230,7 +231,7 @@
               </div>
               <div class="text-left">
                 <span class="font-bold text-primary block">Copy Link</span>
-                <span class="text-xs text-gray-500">Salin link laporan</span>
+                <span class="text-xs text-gray-500">Salin link kebaikan</span>
               </div>
             </button>
             <button
@@ -248,7 +249,7 @@
               </div>
               <div class="text-left">
                 <span class="font-bold text-green-600 block">Share ke WhatsApp</span>
-                <span class="text-xs text-gray-500">Bagikan ke WhatsApp</span>
+                <span class="text-xs text-gray-500">Bagikan kebaikan ini ke WhatsApp</span>
               </div>
             </button>
           </div>
@@ -295,9 +296,12 @@ const formatDateIndo = (dateString) => {
 // Helper function untuk format waktu
 const formatTime = (dateString) => {
   const date = new Date(dateString);
-  const hours = date.getHours().toString().padStart(2, "0");
-  const minutes = date.getMinutes().toString().padStart(2, "0");
-  return `${hours}:${minutes}`;
+  return date.toLocaleTimeString("id-ID", {
+    timeZone: "Asia/Makassar",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
 };
 
 // Helper function untuk format mata uang

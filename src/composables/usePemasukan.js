@@ -91,6 +91,24 @@ export function usePemasukan() {
       // Gunakan user ID yang sedang login
       const userId = getUserId();
 
+      // Format waktu ke timezone Asia/Makassar (UTC+8)
+      const now = new Date();
+      // Ambil waktu dalam format Asia/Makassar
+      const makassarDateString = now.toLocaleString("en-US", {
+        timeZone: "Asia/Makassar",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+      });
+      // Parse dan format ke YYYY-MM-DD HH:mm:ss.sss
+      const [datePart, timePart] = makassarDateString.split(", ");
+      const [month, day, year] = datePart.split("/");
+      const formattedDateTime = `${year}-${month}-${day} ${timePart}.${now.getMilliseconds().toString().padStart(3, "0")}`;
+
       const { data, error: insertError } = await supabase
         .from("transactions")
         .insert([
@@ -102,8 +120,8 @@ export function usePemasukan() {
             source: pemasukan.source || null,
             proof: pemasukan.proof || null,
             created_by: userId,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
+            created_at: formattedDateTime,
+            updated_at: formattedDateTime,
           },
         ])
         .select()
@@ -134,6 +152,24 @@ export function usePemasukan() {
       // Set current user ID untuk RLS
       await setCurrentUserId();
 
+      // Format waktu ke timezone Asia/Makassar (UTC+8)
+      const now = new Date();
+      // Ambil waktu dalam format Asia/Makassar
+      const makassarDateString = now.toLocaleString("en-US", {
+        timeZone: "Asia/Makassar",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+      });
+      // Parse dan format ke YYYY-MM-DD HH:mm:ss.sss
+      const [datePart, timePart] = makassarDateString.split(", ");
+      const [month, day, year] = datePart.split("/");
+      const formattedDateTime = `${year}-${month}-${day} ${timePart}.${now.getMilliseconds().toString().padStart(3, "0")}`;
+
       const { data, error: updateError } = await supabase
         .from("transactions")
         .update({
@@ -142,7 +178,7 @@ export function usePemasukan() {
           amount: pemasukan.amount,
           source: pemasukan.source || null,
           proof: pemasukan.proof || null,
-          updated_at: new Date().toISOString(),
+          updated_at: formattedDateTime,
         })
         .eq("id", id)
         .select()
@@ -172,9 +208,27 @@ export function usePemasukan() {
       // Set current user ID untuk RLS
       await setCurrentUserId();
 
+      // Format waktu ke timezone Asia/Makassar (UTC+8)
+      const now = new Date();
+      // Ambil waktu dalam format Asia/Makassar
+      const makassarDateString = now.toLocaleString("en-US", {
+        timeZone: "Asia/Makassar",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+      });
+      // Parse dan format ke YYYY-MM-DD HH:mm:ss.sss
+      const [datePart, timePart] = makassarDateString.split(", ");
+      const [month, day, year] = datePart.split("/");
+      const formattedDateTime = `${year}-${month}-${day} ${timePart}.${now.getMilliseconds().toString().padStart(3, "0")}`;
+
       const { error: deleteError } = await supabase
         .from("transactions")
-        .update({ deleted_at: new Date().toISOString() })
+        .update({ deleted_at: formattedDateTime })
         .eq("id", id);
 
       if (deleteError) throw deleteError;

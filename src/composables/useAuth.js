@@ -108,13 +108,13 @@ export function useAuth() {
   /**
    * Cek apakah user sudah login saat aplikasi dimuat
    */
-  const checkAuth = () => {
+  const checkAuth = async () => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       user.value = JSON.parse(storedUser);
       // Set current user ID dan username untuk RLS
-      setCurrentUserId();
-      setCurrentUsername(user.value.username);
+      await setCurrentUserId();
+      await setCurrentUsername(user.value.username);
     }
   };
 

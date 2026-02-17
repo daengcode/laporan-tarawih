@@ -11,9 +11,9 @@
           </div>
           <div>
             <h1 class="text-[#111814] text-lg font-bold leading-tight tracking-tight">
-              Amaliyah Ramadhan 1447 H
+              Ramadhan 1447 H Masjid Baiturrahim
             </h1>
-            <p v-if="user" class="text-xs text-gray-500">Halo, {{ user.name }}</p>
+            <!-- <p v-if="user" class="text-xs text-gray-500">Halo, {{ user.name }}</p> -->
           </div>
         </div>
         <div class="flex items-center gap-2">
@@ -21,23 +21,7 @@
         </div>
       </div>
       <!-- Date Scroller -->
-      <div class="flex gap-3 mt-4 overflow-x-scroll overflow-y-hidden pb-1 max-w-md mx-auto">
-        <div
-          v-for="date in dates"
-          :key="date.id"
-          @click="selectDate(date)"
-          :class="[
-            'flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-xl px-5 cursor-pointer transition-all',
-            selectedDate === date.id
-              ? 'bg-primary text-white shadow-lg shadow-primary/20'
-              : 'bg-white border border-primary/10 text-[#111814] hover:border-primary/30',
-          ]"
-        >
-          <p :class="selectedDate === date.id ? 'text-sm font-bold' : 'text-sm font-medium'">
-            {{ date.display }}
-          </p>
-        </div>
-      </div>
+      <DateScroller :dates="dates" :selected-date="selectedDate" @select-date="selectDate" />
     </header>
 
     <main class="max-w-md mx-auto p-4 space-y-6">
@@ -316,10 +300,11 @@ import { usePemasukan } from "@/composables/usePemasukan";
 import { usePengeluaran } from "@/composables/usePengeluaran";
 import BottomMenu from "@/components/BottomMenu.vue";
 import Logout from "@/components/Logout.vue";
+import DateScroller from "@/components/DateScroller.vue";
 import Swal from "sweetalert2";
 
 const router = useRouter();
-const { user, logout } = useAuth();
+const { user, logout, checkAuth } = useAuth();
 const { getTransaksi } = useLaporan();
 const { deletePemasukan } = usePemasukan();
 const { deletePengeluaran } = usePengeluaran();
@@ -346,9 +331,11 @@ const formatDateIndo = (dateString) => {
 
 // Helper function untuk format waktu
 const formatTime = (dateString) => {
-  const date = new Date(dateString);
-  const hours = date.getHours().toString().padStart(2, "0");
-  const minutes = date.getMinutes().toString().padStart(2, "0");
+  if (!dateString) return "--:--";
+  // Data sudah disimpan dalam format Asia/Makassar (YYYY-MM-DD HH:mm:ss.sss)
+  // Cukup ambil bagian jam dan menit saja
+  const timePart = dateString.split(" ")[1] || dateString;
+  const [hours, minutes] = timePart.split(":");
   return `${hours}:${minutes}`;
 };
 
@@ -378,9 +365,25 @@ const fetchTransactions = async () => {
     if (result.success) {
       transactions.value = result.data;
       groupTransactionsByDate();
+    } else {
+      console.error("Gagal mengambil transaksi:", result.error);
+      await Swal.fire({
+        icon: "error",
+        title: "Gagal Memuat Data",
+        text:
+          result.error || "Terjadi kesalahan saat memuat data transaksi. Silakan refresh halaman.",
+        confirmButtonColor: "#059669",
+      });
     }
   } catch (error) {
     console.error("Gagal mengambil transaksi:", error);
+    await Swal.fire({
+      icon: "error",
+      title: "Gagal Memuat Data",
+      text:
+        error.message || "Terjadi kesalahan saat memuat data transaksi. Silakan refresh halaman.",
+      confirmButtonColor: "#059669",
+    });
   } finally {
     loading.value = false;
   }
@@ -672,7 +675,8 @@ const shareToWhatsapp = () => {
 };
 
 // Lifecycle
-onMounted(() => {
+onMounted(async () => {
+  await checkAuth();
   fetchTransactions();
 });
 </script>
