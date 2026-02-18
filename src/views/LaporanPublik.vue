@@ -204,11 +204,7 @@
                 <div
                   class="w-28 h-28 bg-white dark:bg-gray-700 rounded-xl border-2 border-emerald-300 dark:border-emerald-600 flex items-center justify-center overflow-hidden"
                 >
-                  <img
-                    src="/qris.jpg"
-                    alt="QRIS Baiturrahim"
-                    class="w-full h-full object-cover"
-                  />
+                  <img src="/qris.jpg" alt="QRIS Baiturrahim" class="w-full h-full object-cover" />
                 </div>
                 <a
                   href="/qris.jpg"

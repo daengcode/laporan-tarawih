@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Beranda from "../views/Beranda.vue";
+import Ceramah from "../views/Ceramah.vue";
+import Imam from "../views/Imam.vue";
 import InputPemasukan from "../views/InputPemasukan.vue";
 import InputPengeluaran from "../views/InputPengeluaran.vue";
 import EditPemasukan from "../views/EditPemasukan.vue";
@@ -23,6 +25,18 @@ const router = createRouter({
       path: "/",
       name: "beranda",
       component: Beranda,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/ceramah",
+      name: "ceramah",
+      component: Ceramah,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/imam",
+      name: "imam",
+      component: Imam,
       meta: { requiresAuth: true },
     },
     {

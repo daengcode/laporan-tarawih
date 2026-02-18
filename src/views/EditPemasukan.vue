@@ -369,8 +369,8 @@ const formatTanggalHijriah = (dateString) => {
     "Dzul Hijjah",
   ];
 
-  // Reference: 1 Ramadhan 1447 H = 18 Februari 2026
-  const ramadhan1447Start = new Date("2026-02-18");
+  // Reference: 1 Ramadhan 1447 H = 19 Februari 2026
+  const ramadhan1447Start = new Date("2026-02-19");
   const ramadhan1447StartTimestamp = ramadhan1447Start.getTime();
   const currentTimestamp = date.getTime();
 
