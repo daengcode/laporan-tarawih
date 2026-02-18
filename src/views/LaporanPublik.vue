@@ -199,19 +199,25 @@
             class="bg-gradient-to-r from-emerald-50 to-green-50 dark:from-gray-800 dark:to-gray-800 rounded-2xl p-5 border border-emerald-100 dark:border-gray-700 shadow-sm"
           >
             <div class="flex items-center gap-4">
-              <!-- Barcode Placeholder - Kiri -->
+              <!-- QRIS Barcode - Kiri -->
               <div class="flex-shrink-0">
                 <div
-                  class="w-28 h-28 bg-white dark:bg-gray-700 rounded-xl border-2 border-dashed border-emerald-300 dark:border-emerald-600 flex items-center justify-center"
+                  class="w-28 h-28 bg-white dark:bg-gray-700 rounded-xl border-2 border-emerald-300 dark:border-emerald-600 flex items-center justify-center overflow-hidden"
                 >
-                  <div class="text-center">
-                    <span
-                      class="material-symbols-outlined text-4xl text-emerald-500 dark:text-emerald-400"
-                      >qr_code_2</span
-                    >
-                    <p class="text-xs text-gray-400 mt-1">Barcode</p>
-                  </div>
+                  <img
+                    src="/qris.jpg"
+                    alt="QRIS Baiturrahim"
+                    class="w-full h-full object-cover"
+                  />
                 </div>
+                <a
+                  href="/qris.jpg"
+                  download="qris-baiturrahim.jpg"
+                  class="mt-2 flex items-center justify-center gap-1 text-xs font-medium text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors"
+                >
+                  <span class="material-symbols-outlined text-sm">download</span>
+                  <span>Download QRIS</span>
+                </a>
               </div>
 
               <!-- Pesan Ajakan - Kanan -->
@@ -237,7 +243,7 @@
                   class="flex items-center gap-2 text-xs text-amber-600 dark:text-amber-400 font-medium mt-2"
                 >
                   <span class="material-symbols-outlined text-sm">notifications</span>
-                  <span>Setelah melakukan transfer, segera konfirmasi ke nomor 08123456789</span>
+                  <span>Setelah melakukan transfer, segera konfirmasi ke nomor 082346126816</span>
                 </div>
               </div>
             </div>
