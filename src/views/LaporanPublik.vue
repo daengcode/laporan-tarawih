@@ -525,15 +525,19 @@ const fetchTransactions = async (retryCount = 0) => {
     const result = await getTransaksiByDate(dateParam.value);
     console.log("Date param:", dateParam.value);
     console.log("Result:", result);
+    console.log("Result data:", result.data);
+    console.log("Result data length:", result.data?.length);
 
-    if (result.success && result.data && result.data.length > 0) {
-      transactions.value = result.data;
-      dateExists.value = true;
+    // Ubah logika: jika query berhasil, anggap dateExists = true
+    // meskipun tidak ada transaksi pada tanggal tersebut
+    if (result.success) {
+      transactions.value = result.data || [];
+      dateExists.value = true; // Selalu true jika query berhasil
 
       // Ambil transaksi sebelum tanggal yang dipilih
       const previousResult = await getTransaksiBeforeDate(dateParam.value);
       if (previousResult.success) {
-        previousTransactions.value = previousResult.data;
+        previousTransactions.value = previousResult.data || [];
       }
     } else {
       // Jika gagal dan masih ada retry, coba lagi
@@ -542,6 +546,7 @@ const fetchTransactions = async (retryCount = 0) => {
         await new Promise((resolve) => setTimeout(resolve, 500)); // Tunggu 500ms
         return fetchTransactions(retryCount + 1);
       } else {
+        console.error("Failed after retries:", result.error);
         dateExists.value = false;
       }
     }
