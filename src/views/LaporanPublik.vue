@@ -24,7 +24,9 @@
 
       <main v-if="loading" class="flex-1 flex items-center justify-center p-4">
         <div class="text-center">
-          <span class="material-symbols-outlined text-6xl text-primary animate-spin">refresh</span>
+          <div
+            class="w-16 h-16 border-4 border-primary/20 border-t-primary rounded-full animate-spin mx-auto"
+          ></div>
           <p class="mt-4 text-gray-600">Memuat laporan...</p>
         </div>
       </main>
@@ -581,19 +583,6 @@ onMounted(() => {
 .islamic-pattern {
   background: linear-gradient(135deg, #064e3b 0%, #059669 100%);
   position: relative;
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.animate-spin {
-  animation: spin 1s linear infinite;
 }
 
 .material-symbols-outlined {
