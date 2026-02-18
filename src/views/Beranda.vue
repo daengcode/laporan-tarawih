@@ -13,7 +13,7 @@
             <h1 class="text-[#111814] text-lg font-bold leading-tight tracking-tight">
               Masjid Baiturrahim Ramadhan 1447 H
             </h1>
-            <!-- <p v-if="user" class="text-xs text-gray-500">Halo, {{ user.name }}</p> -->
+            <p v-if="user" class="text-xs text-gray-500">Halo, {{ user.name }}</p>
           </div>
         </div>
         <div class="flex items-center gap-2">

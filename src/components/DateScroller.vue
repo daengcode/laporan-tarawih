@@ -28,7 +28,7 @@ const props = defineProps({
     default: () => [],
   },
   selectedDate: {
-    type: Number,
+    type: [Number, null],
     required: true,
     default: null,
   },
