@@ -22,7 +22,7 @@
         </div>
       </div>
 
-      <main v-if="loading" class="flex-1 flex items-center justify-center p-4">
+      <main v-if="loading || !dataReady" class="flex-1 flex items-center justify-center p-4">
         <div class="text-center">
           <div
             class="w-16 h-16 border-4 border-primary/20 border-t-primary rounded-full animate-spin mx-auto"
@@ -322,7 +322,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, nextTick } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useLaporan } from "@/composables/useLaporan";
 import Swal from "sweetalert2";
@@ -338,6 +338,7 @@ const transactions = ref([]);
 const previousTransactions = ref([]);
 const dateExists = ref(false);
 const showShareModal = ref(false);
+const dataReady = ref(false);
 
 // Helper function untuk format tanggal Indonesia
 const formatDateIndo = (dateString) => {
@@ -444,11 +445,13 @@ const expenseTransactions = computed(() => {
 });
 
 const currentIncome = computed(() => {
-  return incomeTransactions.value.reduce((sum, t) => sum + t.amount, 0);
+  if (!transactions.value || transactions.value.length === 0) return 0;
+  return incomeTransactions.value.reduce((sum, t) => sum + (t.amount || 0), 0);
 });
 
 const currentExpense = computed(() => {
-  return expenseTransactions.value.reduce((sum, t) => sum + t.amount, 0);
+  if (!transactions.value || transactions.value.length === 0) return 0;
+  return expenseTransactions.value.reduce((sum, t) => sum + (t.amount || 0), 0);
 });
 
 const currentBalance = computed(() => {
@@ -456,15 +459,17 @@ const currentBalance = computed(() => {
 });
 
 const previousIncome = computed(() => {
+  if (!previousTransactions.value || previousTransactions.value.length === 0) return 0;
   return previousTransactions.value
     .filter((t) => t.type === "pemasukan")
-    .reduce((sum, t) => sum + t.amount, 0);
+    .reduce((sum, t) => sum + (t.amount || 0), 0);
 });
 
 const previousExpense = computed(() => {
+  if (!previousTransactions.value || previousTransactions.value.length === 0) return 0;
   return previousTransactions.value
     .filter((t) => t.type === "pengeluaran")
-    .reduce((sum, t) => sum + t.amount, 0);
+    .reduce((sum, t) => sum + (t.amount || 0), 0);
 });
 
 const previousBalance = computed(() => {
@@ -522,6 +527,7 @@ const shareToWhatsapp = () => {
 // Fetch data dengan retry mechanism
 const fetchTransactions = async (retryCount = 0) => {
   loading.value = true;
+  dataReady.value = false;
   try {
     // Ambil transaksi pada tanggal yang dipilih
     const result = await getTransaksiByDate(dateParam.value);
@@ -535,12 +541,22 @@ const fetchTransactions = async (retryCount = 0) => {
     if (result.success) {
       transactions.value = result.data || [];
       dateExists.value = true; // Selalu true jika query berhasil
+      console.log("Transactions set:", transactions.value);
 
       // Ambil transaksi sebelum tanggal yang dipilih
       const previousResult = await getTransaksiBeforeDate(dateParam.value);
       if (previousResult.success) {
         previousTransactions.value = previousResult.data || [];
+        console.log("Previous transactions set:", previousTransactions.value);
       }
+
+      // Tunggu Vue update reactivity
+      await nextTick();
+      console.log("Current income:", currentIncome.value);
+      console.log("Current expense:", currentExpense.value);
+      console.log("Previous income:", previousIncome.value);
+      console.log("Previous expense:", previousExpense.value);
+      dataReady.value = true;
     } else {
       // Jika gagal dan masih ada retry, coba lagi
       if (retryCount < 2) {
@@ -550,6 +566,7 @@ const fetchTransactions = async (retryCount = 0) => {
       } else {
         console.error("Failed after retries:", result.error);
         dateExists.value = false;
+        dataReady.value = true;
       }
     }
   } catch (error) {
@@ -561,6 +578,7 @@ const fetchTransactions = async (retryCount = 0) => {
       return fetchTransactions(retryCount + 1);
     } else {
       dateExists.value = false;
+      dataReady.value = true;
     }
   } finally {
     loading.value = false;
@@ -575,6 +593,7 @@ onMounted(() => {
   } else {
     dateExists.value = false;
     loading.value = false;
+    dataReady.value = true;
   }
 });
 </script>
