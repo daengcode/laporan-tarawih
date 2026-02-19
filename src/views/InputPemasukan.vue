@@ -185,7 +185,7 @@
                           >Amplop</span
                         >
                       </div>
-                      <!-- Option 4: Transfer -->
+                      <!-- Option 3: Transfer -->
                       <div
                         @click="selectSumberItem(index, 'transfer')"
                         :class="[
@@ -213,6 +213,66 @@
                               : 'text-gray-700 dark:text-gray-300',
                           ]"
                           >Transfer</span
+                        >
+                      </div>
+                      <!-- Option 1: Kotak Amal Subuh -->
+                      <div
+                        @click="selectSumberItem(index, 'kotak-amal-subuh')"
+                        :class="[
+                          'flex items-center p-3 rounded-xl border cursor-pointer transition-all',
+                          item.sumberDana === 'kotak-amal-subuh'
+                            ? 'border-primary bg-primary/10'
+                            : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-primary/50',
+                        ]"
+                      >
+                        <div
+                          :class="[
+                            'w-8 h-8 rounded-full flex items-center justify-center mr-3',
+                            item.sumberDana === 'kotak-amal-subuh'
+                              ? 'bg-primary text-white'
+                              : 'bg-gray-100 dark:bg-gray-700 text-gray-500',
+                          ]"
+                        >
+                          <span class="material-symbols-outlined text-lg">wb_twilight</span>
+                        </div>
+                        <span
+                          :class="[
+                            'text-sm font-semibold',
+                            item.sumberDana === 'kotak-amal-subuh'
+                              ? 'text-primary'
+                              : 'text-gray-700 dark:text-gray-300',
+                          ]"
+                          >Kotak Amal Subuh</span
+                        >
+                      </div>
+                      <!-- Option 4: Lainnya -->
+                      <div
+                        @click="selectSumberItem(index, 'lainnya')"
+                        :class="[
+                          'flex items-center p-3 rounded-xl border cursor-pointer transition-all',
+                          item.sumberDana === 'lainnya'
+                            ? 'border-primary bg-primary/10'
+                            : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-primary/50',
+                        ]"
+                      >
+                        <div
+                          :class="[
+                            'w-8 h-8 rounded-full flex items-center justify-center mr-3',
+                            item.sumberDana === 'lainnya'
+                              ? 'bg-primary text-white'
+                              : 'bg-gray-100 dark:bg-gray-700 text-gray-500',
+                          ]"
+                        >
+                          <span class="material-symbols-outlined text-lg">more_horiz</span>
+                        </div>
+                        <span
+                          :class="[
+                            'text-sm font-semibold',
+                            item.sumberDana === 'lainnya'
+                              ? 'text-primary'
+                              : 'text-gray-700 dark:text-gray-300',
+                          ]"
+                          >Lainnya</span
                         >
                       </div>
                     </div>
@@ -447,7 +507,13 @@ const savePemasukan = async () => {
   // Validasi form
   const infaqLaki = unformatNumber(form.value.infaqLaki);
   const infaqPerempuan = unformatNumber(form.value.infaqPerempuan);
-  const total = infaqLaki + infaqPerempuan;
+
+  // Hitung total pemasukan lainnya
+  const totalPemasukanLainnya = form.value.pemasukanLainnya.reduce((sum, item) => {
+    return sum + unformatNumber(item.jumlah);
+  }, 0);
+
+  const total = infaqLaki + infaqPerempuan + totalPemasukanLainnya;
 
   if (total === 0) {
     Swal.fire({
@@ -504,11 +570,28 @@ const savePemasukan = async () => {
     for (const item of form.value.pemasukanLainnya) {
       const jumlah = unformatNumber(item.jumlah);
       if (jumlah > 0) {
+        // Mapping sumber dana ke nama yang sesuai
+        let sourceName = "Lainnya";
+        switch (item.sumberDana) {
+          case "kotak-amal-subuh":
+            sourceName = "Kotak Amal Subuh";
+            break;
+          case "amplop":
+            sourceName = "Amplop";
+            break;
+          case "transfer":
+            sourceName = "Transfer";
+            break;
+          case "lainnya":
+            sourceName = "Lainnya";
+            break;
+        }
+
         const result = await addPemasukan({
           date: form.value.tanggal,
           name: item.nama || "Pemasukan Lainnya",
           amount: jumlah,
-          source: item.sumberDana === "amplop" ? "Amplop" : "Transfer",
+          source: sourceName,
           created_by: user.value.id,
         });
         if (!result.success) {
