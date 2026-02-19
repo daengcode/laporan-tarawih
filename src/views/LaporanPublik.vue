@@ -322,7 +322,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, nextTick } from "vue";
+import { ref, computed, onMounted, onUnmounted, nextTick, watchEffect } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useLaporan } from "@/composables/useLaporan";
 import Swal from "sweetalert2";
@@ -339,6 +339,7 @@ const previousTransactions = ref([]);
 const dateExists = ref(false);
 const showShareModal = ref(false);
 const dataReady = ref(false);
+const dataCheckTimeout = ref(null);
 
 // Helper function untuk format tanggal Indonesia
 const formatDateIndo = (dateString) => {
@@ -528,52 +529,59 @@ const shareToWhatsapp = () => {
 const fetchTransactions = async (retryCount = 0) => {
   loading.value = true;
   dataReady.value = false;
+
   try {
     // Ambil transaksi pada tanggal yang dipilih
     const result = await getTransaksiByDate(dateParam.value);
-    console.log("Date param:", dateParam.value);
-    console.log("Result:", result);
-    console.log("Result data:", result.data);
-    console.log("Result data length:", result.data?.length);
 
     // Ubah logika: jika query berhasil, anggap dateExists = true
     // meskipun tidak ada transaksi pada tanggal tersebut
     if (result.success) {
       transactions.value = result.data || [];
       dateExists.value = true; // Selalu true jika query berhasil
-      console.log("Transactions set:", transactions.value);
 
       // Ambil transaksi sebelum tanggal yang dipilih
       const previousResult = await getTransaksiBeforeDate(dateParam.value);
       if (previousResult.success) {
         previousTransactions.value = previousResult.data || [];
-        console.log("Previous transactions set:", previousTransactions.value);
       }
 
       // Tunggu Vue update reactivity
       await nextTick();
-      console.log("Current income:", currentIncome.value);
-      console.log("Current expense:", currentExpense.value);
-      console.log("Previous income:", previousIncome.value);
-      console.log("Previous expense:", previousExpense.value);
+
+      // Set timeout untuk memeriksa apakah data masih 0
+      // Ini untuk menangani kasus di mobile network yang lambat
+      dataCheckTimeout.value = setTimeout(() => {
+        // Jika semua nilai masih 0 tapi ada transaksi, mungkin ada masalah dengan computed
+        // Coba refresh data
+        if (
+          currentIncome.value === 0 &&
+          currentExpense.value === 0 &&
+          totalBalance.value === 0 &&
+          (transactions.value.length > 0 || previousTransactions.value.length > 0)
+        ) {
+          // Force re-render dengan mengubah dataReady
+          dataReady.value = false;
+          setTimeout(() => {
+            dataReady.value = true;
+          }, 100);
+        }
+      }, 2000); // 2 detik
+
       dataReady.value = true;
     } else {
       // Jika gagal dan masih ada retry, coba lagi
       if (retryCount < 2) {
-        console.log(`Retry ${retryCount + 1}...`);
         await new Promise((resolve) => setTimeout(resolve, 500)); // Tunggu 500ms
         return fetchTransactions(retryCount + 1);
       } else {
-        console.error("Failed after retries:", result.error);
         dateExists.value = false;
         dataReady.value = true;
       }
     }
   } catch (error) {
-    console.error("Gagal mengambil transaksi:", error);
     // Jika error dan masih ada retry, coba lagi
     if (retryCount < 2) {
-      console.log(`Retry ${retryCount + 1} after error...`);
       await new Promise((resolve) => setTimeout(resolve, 500)); // Tunggu 500ms
       return fetchTransactions(retryCount + 1);
     } else {
@@ -587,13 +595,68 @@ const fetchTransactions = async (retryCount = 0) => {
 
 // Lifecycle
 onMounted(() => {
-  dateParam.value = route.params.date;
-  if (dateParam.value) {
-    fetchTransactions();
+  // Decode URL parameter dan normalisasi tanggal
+  let rawDate = route.params.date;
+
+  // Decode URI component jika ada special characters
+  if (rawDate) {
+    try {
+      rawDate = decodeURIComponent(rawDate);
+    } catch (error) {
+      console.error("Error decoding date:", error);
+    }
+
+    // Validasi format tanggal (YYYY-MM-DD)
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (dateRegex.test(rawDate)) {
+      // Parse tanggal untuk memastikan valid
+      const parsedDate = new Date(rawDate);
+
+      // Format ulang tanggal untuk memastikan konsistensi
+      const year = parsedDate.getFullYear();
+      const month = (parsedDate.getMonth() + 1).toString().padStart(2, "0");
+      const day = parsedDate.getDate().toString().padStart(2, "0");
+      dateParam.value = `${year}-${month}-${day}`;
+
+      fetchTransactions();
+    } else {
+      dateParam.value = "";
+      dateExists.value = false;
+      loading.value = false;
+      dataReady.value = true;
+    }
   } else {
+    dateParam.value = "";
     dateExists.value = false;
     loading.value = false;
     dataReady.value = true;
+  }
+});
+
+// Cleanup timeout when component unmounts
+onUnmounted(() => {
+  if (dataCheckTimeout.value) {
+    clearTimeout(dataCheckTimeout.value);
+  }
+});
+
+// Watch effect untuk memantau perubahan data dan memastikan dataReady
+watchEffect(() => {
+  // Jika ada transaksi tapi nilai masih 0, force refresh
+  if (
+    !loading.value &&
+    dataReady.value &&
+    dateExists.value &&
+    currentIncome.value === 0 &&
+    currentExpense.value === 0 &&
+    totalBalance.value === 0 &&
+    (transactions.value.length > 0 || previousTransactions.value.length > 0)
+  ) {
+    // Force re-render
+    dataReady.value = false;
+    setTimeout(() => {
+      dataReady.value = true;
+    }, 100);
   }
 });
 </script>
