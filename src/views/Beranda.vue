@@ -241,9 +241,9 @@
       <div class="bg-white rounded-2xl p-6 w-full max-w-sm">
         <h3 class="text-lg font-bold text-center mb-4">Bagikan Laporan</h3>
         <div class="mb-4 p-4 bg-gray-50 rounded-xl">
-          <p class="text-sm font-bold text-gray-900 mb-2">
+          <!-- <p class="text-sm font-bold text-gray-900 mb-2">
             Tanggal: {{ getSelectedDateDisplay() }}
-          </p>
+          </p> -->
           <p class="text-xs text-gray-500">Pilih cara untuk membagikan laporan ini:</p>
         </div>
         <div class="space-y-3">
@@ -693,6 +693,7 @@ const getShareLink = () => {
 
   const baseUrl = window.location.origin;
   const formattedDate = selectedDateData.date; // Format: YYYY-MM-DD
+  return `${baseUrl}/laporan-amaliyah-ramadhan`;
   return `${baseUrl}/laporan-amaliyah-ramadhan/${formattedDate}`;
 };
 
@@ -726,10 +727,12 @@ const shareToWhatsapp = () => {
   if (!selectedDateData) return;
 
   const link = getShareLink();
-  const message = `Laporan Amaliyah Ramadhan 1447 H
-  Masjid Baiturrahim tanggal ${selectedDateData.display}.
-  Silakan lihat laporan lengkap di:
-  ${link}`;
+  // const message = `Laporan Amaliyah Ramadhan 1447 H
+  // Masjid Baiturrahim tanggal ${selectedDateData.display}.
+  // Silakan lihat laporan lengkap di:
+  // ${link}`;
+  const message = `Laporan Amaliyah Ramadhan 1447 H Masjid Baiturrahim.
+  Silakan lihat laporan lengkap di: ${link}`;
   const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
   window.open(whatsappUrl, "_blank");
   showShareModal.value = false;

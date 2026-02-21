@@ -8,6 +8,7 @@ import EditPemasukan from "../views/EditPemasukan.vue";
 import EditPengeluaran from "../views/EditPengeluaran.vue";
 import Laporan from "../views/Laporan.vue";
 import LaporanPublik from "../views/LaporanPublik.vue";
+import LaporanAmaliyahRamadhan from "../views/LaporanAmaliyahRamadhan.vue";
 import NotFound from "../views/NotFound.vue";
 import Login from "../views/Login.vue";
 import { useAuth } from "@/composables/useAuth";
@@ -73,6 +74,12 @@ const router = createRouter({
       path: "/laporan-amaliyah-ramadhan/:date",
       name: "laporan-publik",
       component: LaporanPublik,
+      meta: { requiresAuth: false },
+    },
+    {
+      path: "/laporan-amaliyah-ramadhan",
+      name: "laporan-amaliyah-ramadhan",
+      component: LaporanAmaliyahRamadhan,
       meta: { requiresAuth: false },
     },
     {
