@@ -85,12 +85,6 @@ export function usePemasukan() {
     error.value = null;
 
     try {
-      // Set current user ID untuk RLS
-      await setCurrentUserId();
-
-      // Gunakan user ID yang sedang login
-      const userId = getUserId();
-
       // Format waktu ke timezone Asia/Makassar (UTC+8)
       const now = new Date();
       // Ambil waktu dalam format Asia/Makassar
@@ -119,7 +113,7 @@ export function usePemasukan() {
             amount: pemasukan.amount,
             source: pemasukan.source || null,
             proof: pemasukan.proof || null,
-            created_by: userId,
+            created_by: null,
             created_at: formattedDateTime,
             updated_at: formattedDateTime,
           },
@@ -149,9 +143,6 @@ export function usePemasukan() {
     error.value = null;
 
     try {
-      // Set current user ID untuk RLS
-      await setCurrentUserId();
-
       // Format waktu ke timezone Asia/Makassar (UTC+8)
       const now = new Date();
       // Ambil waktu dalam format Asia/Makassar

@@ -233,7 +233,7 @@
                               : 'bg-gray-100 dark:bg-gray-700 text-gray-500',
                           ]"
                         >
-                          <span class="material-symbols-outlined text-lg">wb_twilight</span>
+                          <span class="material-symbols-outlined text-lg">volunteer_activism</span>
                         </div>
                         <span
                           :class="[
@@ -274,6 +274,20 @@
                           ]"
                           >Lainnya</span
                         >
+                      </div>
+                    </div>
+                    <!-- Input untuk Sumber Dana Lainnya -->
+                    <div v-if="item.sumberDana === 'lainnya'" class="space-y-2">
+                      <p class="text-gray-600 dark:text-gray-400 text-sm font-semibold ml-1">
+                        Jelaskan Sumber Dana
+                      </p>
+                      <div class="relative">
+                        <input
+                          v-model="item.sumberDanaLainnya"
+                          class="form-input flex w-full rounded-xl text-gray-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/20 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:border-primary h-14 px-4 text-base font-bold placeholder:text-gray-300"
+                          placeholder="Contoh: Tunai, Wakaf, dll"
+                          type="text"
+                        />
                       </div>
                     </div>
                   </div>
@@ -395,6 +409,7 @@ const tambahPemasukanLainnya = () => {
     nama: "",
     jumlah: "",
     sumberDana: "amplop",
+    sumberDanaLainnya: "",
   });
 };
 
@@ -532,7 +547,6 @@ const savePemasukan = async () => {
       name: "Infaq Laki-laki",
       amount: infaqLaki,
       source: "Kotak Amal Laki-laki",
-      created_by: user.value.id,
     });
     if (!result.success) {
       Swal.fire({
@@ -552,7 +566,6 @@ const savePemasukan = async () => {
       name: "Infaq Perempuan",
       amount: infaqPerempuan,
       source: "Kotak Amal Perempuan",
-      created_by: user.value.id,
     });
     if (!result.success) {
       Swal.fire({
@@ -583,7 +596,7 @@ const savePemasukan = async () => {
             sourceName = "Transfer";
             break;
           case "lainnya":
-            sourceName = "Lainnya";
+            sourceName = item.sumberDanaLainnya || "Lainnya";
             break;
         }
 
@@ -592,7 +605,6 @@ const savePemasukan = async () => {
           name: item.nama || "Pemasukan Lainnya",
           amount: jumlah,
           source: sourceName,
-          created_by: user.value.id,
         });
         if (!result.success) {
           Swal.fire({

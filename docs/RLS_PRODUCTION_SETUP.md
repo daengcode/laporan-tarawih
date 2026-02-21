@@ -20,7 +20,9 @@ Sebelum memulai, pastikan Anda memiliki:
 3. Buka **SQL Editor** dari menu sidebar
 4. Klik **"New query"**
 
-### 1.2 Jalankan Script RLS Production
+### 1.2 Jalankan Script RLS Production (All-in-One)
+
+**⚠️ PENTING:** Script [`rls-production.sql`](../supabase/rls-production.sql:1) sudah menggabungkan helper functions dan RLS policies dalam satu file!
 
 Copy dan paste seluruh isi file [`supabase/rls-production.sql`](../supabase/rls-production.sql:1) ke SQL Editor:
 
@@ -36,6 +38,10 @@ Copy dan paste seluruh isi file [`supabase/rls-production.sql`](../supabase/rls-
 -- - Admin bisa melihat semua data
 -- - User hanya bisa mengubah data sendiri
 -- - User hanya bisa menghapus data sendiri
+--
+-- CATATAN:
+-- Script ini menggabungkan helper functions dan RLS policies
+-- dalam satu file untuk kemudahan setup
 -- ============================================
 
 -- ... (rest of the script)
@@ -47,11 +53,25 @@ Klik **"Run"** untuk mengeksekusi script.
 
 Pastikan script berhasil dijalankan dengan memeriksa output:
 
-- ✅ Function `set_current_user_id` dibuat
-- ✅ Function `get_current_user_id` dibuat
-- ✅ Function `is_admin` dibuat
-- ✅ Policies untuk tabel `users` dibuat
-- ✅ Policies untuk tabel `transactions` dibuat
+**Bagian 1 - Fungsi Helper:**
+
+```
+=== FUNGSI HELPER ===
+get_current_user_id    | FUNCTION | bigint
+get_current_username   | FUNCTION | text
+is_admin               | FUNCTION | boolean
+set_current_user_id    | FUNCTION | void
+set_current_username   | FUNCTION | void
+login_user            | FUNCTION | record
+```
+
+**Bagian 2 - Policies Users:**
+
+- ✅ 7 policies untuk tabel `users` dibuat
+
+**Bagian 3 - Policies Transactions:**
+
+- ✅ 7 policies untuk tabel `transactions` dibuat
 
 ## 🔧 Langkah 2: Setup Frontend
 
@@ -248,54 +268,77 @@ ORDER BY policyname;
 
 ## 🚨 Troubleshooting
 
-### Masalah 1: Query Mengembalikan Data Kosong
+### Masalah 1: Error "function set_current_user_id does not exist"
 
 **Gejala:**
 
 ```javascript
-const { data } = await supabase.from("transactions").select("*");
-console.log(data); // []
-```
-
-**Solusi:**
-
-1. Pastikan user ID di-set sebelum query:
-   ```javascript
-   await supabase.rpc("set_current_user_id", { user_id: userId });
-   ```
-2. Cek localStorage:
-   ```javascript
-   console.log(localStorage.getItem("userId"));
-   ```
-3. Pastikan RLS policies aktif:
-   ```sql
-   SELECT * FROM pg_policies WHERE tablename = 'transactions';
-   ```
-
-### Masalah 2: Error "new row violates row-level security policy"
-
-**Gejala:**
-
-```javascript
-const { error } = await supabase.from('transactions').insert({...});
+const { error } = await supabase.rpc("set_current_user_id", {
+  user_id: userId,
+});
 console.log(error);
-// Error: new row violates row-level security policy
+// Error: function set_current_user_id(bigint) does not exist
 ```
 
 **Solusi:**
 
-1. Pastikan `created_by` menggunakan user ID yang sedang login:
-   ```javascript
-   const userId = localStorage.getItem('userId');
-   await supabase.from('transactions').insert({
-     ...,
-     created_by: userId  // Gunakan userId dari localStorage
-   });
+1. Pastikan Anda sudah menjalankan script helper functions:
+
+   ```sql
+   -- Jalankan file supabase/rls-helper-functions.sql
    ```
+
+2. Verifikasi fungsi sudah dibuat:
+
+   ```sql
+   SELECT routine_name
+   FROM information_schema.routines
+   WHERE routine_schema = 'public'
+   AND routine_name = 'set_current_user_id';
+   ```
+
+3. Jika belum ada, jalankan ulang script helper functions
+
+**Penyebab:**
+
+- Script `rls-helper-functions.sql` belum dijalankan sebelum `rls-production.sql`
+- Fungsi helper diperlukan untuk menyimpan user ID di session PostgreSQL
+
+### Masalah 2: Error "new row violates row-level security policy" (Intermittent)
+
+**Gejala:**
+
+```javascript
+// Kadang error, kadang berhasil
+const { error } = await supabase.from('transactions').insert({...});
+// Error: new row violates row-level security policy for table "transactions"
+```
+
+**Solusi:**
+
+1. Pastikan helper functions sudah dibuat (lihat Masalah 1)
 2. Pastikan `set_current_user_id` dipanggil sebelum insert:
    ```javascript
-   await setCurrentUserId();
+   await setCurrentUserId(); // Ini sudah otomatis di addPemasukan/addPengeluaran
    ```
+3. Cek console browser untuk error dari `setCurrentUserId()`:
+   ```javascript
+   // Error akan muncul di console jika fungsi tidak ada
+   ```
+4. Pastikan `created_by` menggunakan user ID yang sedang login:
+   ```javascript
+   const userId = getUserId(); // Dari localStorage
+   await supabase.from('transactions').insert({
+     ...,
+     created_by: userId  // Harus sama dengan user ID di session
+   });
+   ```
+
+**Penyebab:**
+
+- Fungsi `get_current_user_id()` belum didefinisikan
+- Session PostgreSQL tidak tersedia saat insert
+- Race condition antara `setCurrentUserId()` dan query insert
 
 ### Masalah 3: Admin Tidak Bisa Melihat Semua Data
 
@@ -356,13 +399,12 @@ console.log(data); // [] (kosong)
 
 Sebelum deploy ke production, pastikan:
 
-- [ ] SQL script RLS production sudah dijalankan
-- [ ] Function `set_current_user_id` sudah dibuat
-- [ ] Function `get_current_user_id` sudah dibuat
-- [ ] Function `is_admin` sudah dibuat
-- [ ] Policies untuk tabel `users` sudah dibuat
-- [ ] Policies untuk tabel `transactions` sudah dibuat
+- [ ] SQL script RLS production sudah dijalankan (`supabase/rls-production.sql`)
+- [ ] Script menampilkan 6 fungsi helper (set_current_user_id, get_current_user_id, set_current_username, get_current_username, is_admin, login_user)
+- [ ] Script menampilkan 7 policies untuk tabel `users`
+- [ ] Script menampilkan 7 policies untuk tabel `transactions`
 - [ ] Frontend sudah terupdate dengan RLS logic
+- [ ] Error handling di `useAuth.js` sudah ditambahkan
 - [ ] Login admin berhasil
 - [ ] Login user biasa berhasil
 - [ ] Semua user yang login bisa melihat semua transaksi
@@ -372,6 +414,7 @@ Sebelum deploy ke production, pastikan:
 - [ ] User biasa tidak bisa delete data user lain
 - [ ] Admin bisa update data user lain
 - [ ] Admin bisa delete data user lain
+- [ ] Tidak ada error "function does not exist" di console browser
 
 ## 🔒 Best Practices RLS
 

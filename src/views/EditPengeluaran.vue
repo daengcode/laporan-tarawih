@@ -146,7 +146,7 @@
                     Jenis Keperluan
                   </p>
                   <div class="grid grid-cols-2 gap-3">
-                    <!-- Option 2: Kebersihan -->
+                    <!-- Option 1: Kebersihan -->
                     <div
                       @click="item.jenisKeperluan = 'kebersihan'"
                       :class="[
@@ -176,7 +176,67 @@
                         >Kebersihan</span
                       >
                     </div>
+                    <!-- Option 2: Kultum Subuh -->
+                    <div
+                      @click="item.jenisKeperluan = 'kultum-subuh'"
+                      :class="[
+                        'flex items-center p-3 rounded-xl border cursor-pointer transition-all',
+                        item.jenisKeperluan === 'kultum-subuh'
+                          ? 'border-orange-500 bg-orange-50'
+                          : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-orange-400',
+                      ]"
+                    >
+                      <div
+                        :class="[
+                          'w-8 h-8 rounded-full flex items-center justify-center mr-3',
+                          item.jenisKeperluan === 'kultum-subuh'
+                            ? 'bg-orange-500 text-white'
+                            : 'bg-gray-100 dark:bg-gray-700 text-gray-500',
+                        ]"
+                      >
+                        <span class="material-symbols-outlined text-lg">auto_stories</span>
+                      </div>
+                      <span
+                        :class="[
+                          'text-sm font-semibold',
+                          item.jenisKeperluan === 'kultum-subuh'
+                            ? 'text-orange-700'
+                            : 'text-gray-700 dark:text-gray-300',
+                        ]"
+                        >Kultum Subuh</span
+                      >
+                    </div>
                     <!-- Option 3: Buka Puasa -->
+                    <div
+                      @click="item.jenisKeperluan = 'buka-puasa'"
+                      :class="[
+                        'flex items-center p-3 rounded-xl border cursor-pointer transition-all',
+                        item.jenisKeperluan === 'buka-puasa'
+                          ? 'border-orange-500 bg-orange-50'
+                          : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-orange-400',
+                      ]"
+                    >
+                      <div
+                        :class="[
+                          'w-8 h-8 rounded-full flex items-center justify-center mr-3',
+                          item.jenisKeperluan === 'buka-puasa'
+                            ? 'bg-orange-500 text-white'
+                            : 'bg-gray-100 dark:bg-gray-700 text-gray-500',
+                        ]"
+                      >
+                        <span class="material-symbols-outlined text-lg">restaurant</span>
+                      </div>
+                      <span
+                        :class="[
+                          'text-sm font-semibold',
+                          item.jenisKeperluan === 'buka-puasa'
+                            ? 'text-orange-700'
+                            : 'text-gray-700 dark:text-gray-300',
+                        ]"
+                        >Buka Puasa</span
+                      >
+                    </div>
+                    <!-- Option 4: Lainnya -->
                     <div
                       @click="item.jenisKeperluan = 'lainnya'"
                       :class="[
@@ -194,7 +254,7 @@
                             : 'bg-gray-100 dark:bg-gray-700 text-gray-500',
                         ]"
                       >
-                        <span class="material-symbols-outlined text-lg">restaurant</span>
+                        <span class="material-symbols-outlined text-lg">more_horiz</span>
                       </div>
                       <span
                         :class="[
@@ -203,8 +263,22 @@
                             ? 'text-orange-700'
                             : 'text-gray-700 dark:text-gray-300',
                         ]"
-                        >Buka Puasa</span
+                        >Lainnya</span
                       >
+                    </div>
+                  </div>
+                  <!-- Input untuk Jenis Keperluan Lainnya -->
+                  <div v-if="item.jenisKeperluan === 'lainnya'" class="space-y-2 mt-2">
+                    <p class="text-gray-600 dark:text-gray-400 text-sm font-semibold ml-1">
+                      Jelaskan Jenis Keperluan
+                    </p>
+                    <div class="relative">
+                      <input
+                        v-model="item.jenisKeperluanLainnya"
+                        class="form-input flex w-full rounded-xl text-gray-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-orange-200 dark:focus:ring-orange-700 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:border-orange-500 h-14 px-4 text-base font-bold placeholder:text-gray-300"
+                        placeholder="Contoh: Pembelian ATK, dll"
+                        type="text"
+                      />
                     </div>
                   </div>
                 </div>
@@ -289,10 +363,32 @@ const loadTransaction = async () => {
     } else {
       // This is "Lainnya" expense
       jenisPengeluaran.value = "lainnya";
+
+      // Mapping expense_type ke jenisKeperluan yang sesuai
+      let jenisKeperluan = "lainnya";
+      let jenisKeperluanLainnya = "";
+
+      switch (result.data.expense_type) {
+        case "Kebersihan":
+          jenisKeperluan = "kebersihan";
+          break;
+        case "Kultum Subuh":
+          jenisKeperluan = "kultum-subuh";
+          break;
+        case "Buka Puasa":
+          jenisKeperluan = "buka-puasa";
+          break;
+        default:
+          jenisKeperluan = "lainnya";
+          jenisKeperluanLainnya = result.data.expense_type;
+          break;
+      }
+
       form.value.pengeluaranLainnya.push({
         nama: result.data.name,
         biaya: formatNumber(result.data.amount),
-        jenisKeperluan: result.data.expense_type === "Kebersihan" ? "kebersihan" : "lainnya",
+        jenisKeperluan: jenisKeperluan,
+        jenisKeperluanLainnya: jenisKeperluanLainnya,
       });
     }
   } else {
@@ -312,6 +408,7 @@ const tambahPengeluaranLainnya = () => {
     nama: "",
     biaya: "",
     jenisKeperluan: "kebersihan",
+    jenisKeperluanLainnya: "",
   });
 };
 
@@ -487,11 +584,28 @@ const updatePengeluaran = async () => {
     for (const item of form.value.pengeluaranLainnya) {
       const biaya = unformatNumber(item.biaya);
       if (biaya > 0) {
+        // Mapping jenis keperluan ke nama yang sesuai
+        let expenseTypeName = "Lainnya";
+        switch (item.jenisKeperluan) {
+          case "kebersihan":
+            expenseTypeName = "Kebersihan";
+            break;
+          case "kultum-subuh":
+            expenseTypeName = "Kultum Subuh";
+            break;
+          case "buka-puasa":
+            expenseTypeName = "Buka Puasa";
+            break;
+          case "lainnya":
+            expenseTypeName = item.jenisKeperluanLainnya || "Lainnya";
+            break;
+        }
+
         const result = await updatePengeluaranData(transactionId, {
           date: form.value.tanggal,
           name: item.nama || "Pengeluaran Lainnya",
           amount: biaya,
-          expense_type: item.jenisKeperluan === "kebersihan" ? "Kebersihan" : "Buka Puasa",
+          expense_type: expenseTypeName,
         });
         if (!result.success) {
           Swal.fire({
