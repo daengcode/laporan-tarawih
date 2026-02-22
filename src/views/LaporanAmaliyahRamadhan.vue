@@ -39,9 +39,9 @@
           class="islamic-pattern rounded-2xl p-6 text-white shadow-xl shadow-primary/30 relative overflow-hidden"
         >
           <div class="relative z-10">
-            <p class="text-white/80 text-sm font-medium mb-1">SALDO PEMASUKAN</p>
+            <p class="text-white/80 text-sm font-medium mb-1">SALDO KAS SEKARANG</p>
             <h2 class="text-3xl font-extrabold tracking-tight mb-6">
-              {{ formatCurrency(currentBalance) }}
+              {{ formatCurrency(totalBalance) }}
             </h2>
             <div class="grid grid-cols-2 gap-4">
               <div class="bg-white/10 backdrop-blur-md rounded-xl p-3 border border-white/20">
@@ -68,55 +68,6 @@
           <div
             class="absolute -bottom-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-2xl"
           ></div>
-        </div>
-
-        <!-- Saldo Kas Section -->
-        <div
-          class="bg-white dark:bg-gray-800 rounded-2xl p-4 border border-gray-200 dark:border-gray-700 shadow-sm"
-        >
-          <h3 class="text-[#111814] dark:text-white text-base font-bold mb-4">
-            Saldo Kas {{ getSelectedDateDisplay() }}
-          </h3>
-          <div class="space-y-3">
-            <div
-              class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-xl"
-            >
-              <div class="flex items-center gap-3">
-                <div
-                  class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center"
-                >
-                  <span class="material-symbols-outlined text-blue-600 dark:text-blue-400 text-lg"
-                    >history</span
-                  >
-                </div>
-                <div>
-                  <p class="text-sm font-bold text-gray-900 dark:text-white">Saldo Sebelumnya</p>
-                  <p class="text-xs text-gray-500 dark:text-gray-400">
-                    Akumulasi sebelum tanggal ini
-                  </p>
-                </div>
-              </div>
-              <p class="font-bold text-sm text-blue-600 dark:text-blue-400">
-                {{ formatCurrency(previousBalance) }}
-              </p>
-            </div>
-            <div
-              class="flex items-center justify-between p-3 bg-primary/5 rounded-xl border border-primary/20"
-            >
-              <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
-                  <span class="material-symbols-outlined text-white text-lg"
-                    >account_balance_wallet</span
-                  >
-                </div>
-                <div>
-                  <p class="text-sm font-bold text-gray-900 dark:text-white">Saldo Sekarang</p>
-                  <p class="text-xs text-gray-500 dark:text-gray-400">Total saldo saat ini</p>
-                </div>
-              </div>
-              <p class="font-bold text-sm text-primary">{{ formatCurrency(totalBalance) }}</p>
-            </div>
-          </div>
         </div>
 
         <!-- Pemasukan Section -->
@@ -592,15 +543,18 @@ const groupTransactionsByDate = () => {
 // Update selected date transactions
 const updateSelectedDateTransactions = async (date) => {
   selectedDateTransactions.value = [];
+  previousTransactions.value = [];
 
-  // Ambil transaksi pada tanggal yang dipilih
-  const result = await getTransaksiByDate(date);
+  // Ambil transaksi pada tanggal yang dipilih dan sebelum tanggal yang dipilih secara paralel
+  const [result, previousResult] = await Promise.all([
+    getTransaksiByDate(date),
+    getTransaksiBeforeDate(date),
+  ]);
+
   if (result.success) {
     selectedDateTransactions.value = result.data || [];
   }
 
-  // Ambil transaksi sebelum tanggal yang dipilih
-  const previousResult = await getTransaksiBeforeDate(date);
   if (previousResult.success) {
     previousTransactions.value = previousResult.data || [];
   }
